@@ -14,6 +14,6 @@
   font-family: BuxtonSketch;
 }
 
-.navbar-default .navbar-nav > li > a {
-  color: #98978b;
+.navbar-inverse .navbar-brand {
+  color: #0f0f0f;
 }
