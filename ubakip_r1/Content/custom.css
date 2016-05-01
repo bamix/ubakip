@@ -13,3 +13,7 @@
   font-size: 36px;
   font-family: BuxtonSketch;
 }
+
+.navbar-default .navbar-nav > li > a {
+  color: #98978b;
+}
