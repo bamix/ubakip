@@ -109,7 +109,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Content\bootstrap.css" />
+    <Content Include="Content\bootstrap_light_sandstone.css" />
+    <Content Include="Content\bootstrap_dark_slate.css" />
+    <Content Include="Content\onBootstrap.css" />
+    <Content Include="Content\nonbootstrap.css" />
     <Content Include="Content\Site.css" />
     <Content Include="Content\custom.css" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
