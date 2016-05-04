@@ -11,22 +11,19 @@
     <link href="~/Content/rating.css" rel="stylesheet" type="text/css" />
     <link href="~/Content/nonbootstrap.css" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
-    <link rel="shortcut icon" type="image/x-icon" href="~/Content/Images/logo.png" />
+    
 
 </head>
 <body ng-app>
     <div class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
-
-            <div class="navbar-header">                
+            <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a href="/Home/Home" class="navbar-brand"> <img src="~/Content/images/logo.png" alt="Company logo" style="height:100%" />Ubakip.ru </a>
-
-             @*  @Html.ActionLink("Ubakip.ru", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })*@
+               @Html.ActionLink("Ubakip.ru", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
