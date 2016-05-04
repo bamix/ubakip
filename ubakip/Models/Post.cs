@@ -15,7 +15,7 @@ namespace ubakip.Models
         public MPAARating MPAARating { get; set; }
         public string Cover { get; set; }
         public User Author { get; set; }
-        public List<Page> Pages { get; set; }
+        public List<Page> Pages = new List<Page>();
         public List<Tag> Tags { get; set; }
     }
 }

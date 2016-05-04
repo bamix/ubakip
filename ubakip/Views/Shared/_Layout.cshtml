@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html>
+<html >
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,10 +11,9 @@
     <link href="~/Content/rating.css" rel="stylesheet" type="text/css" />
     <link href="~/Content/nonbootstrap.css" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
-    
-
+    <script src="http://rubaxa.github.io/Sortable/Sortable.js"></script>
 </head>
-<body ng-app>
+<body ng-app="">
     <div class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
             <div class="navbar-header">
@@ -29,8 +28,18 @@
                 <ul class="nav navbar-nav">
                     <li>@Html.ActionLink("New", "Index", "Home")</li>
                     <li>@Html.ActionLink("Popular", "Index", "Home")</li>
+                    <li>@Html.ActionLink("Comics", "ComicsView", "Home")</li>
                     <li>@Html.ActionLink("User", "UserInfo", "Home")</li>
+                    <li><form action="" class="search-form">
+    <div class="form-group has-feedback">
+        <label for="search" class="sr-only">Search</label>
+        <input type="text" class="form-control" name="search" id="search" placeholder="search">
+        <span class="glyphicon glyphicon-search form-control-feedback"></span>
+    </div>
+</form></li>
                   </ul>
+
+
                 @Html.Partial("_LoginPartial")
             </div>
         </div>

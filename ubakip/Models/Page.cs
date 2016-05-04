@@ -7,5 +7,6 @@ namespace ubakip.Models
 {
     public class Page
     {
+        public string Preview { get; set; }
     }
 }

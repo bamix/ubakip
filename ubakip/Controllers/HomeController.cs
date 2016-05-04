@@ -112,10 +112,38 @@ namespace ubakip.Controllers
             return View();
         }
 
-        public ActionResult Contact()
+        public ActionResult ComicsView()
         {
-            ViewBag.Message = "Your contact page.";
-            return View();
+            List<Tag> tags = new List<Tag>();
+            tags.Add(new Tag() { Name = "tag1" });
+            tags.Add(new Tag() { Name = "tag2" });
+            tags.Add(new Tag() { Name = "tag3" });
+            User author = new User() { Nickname = "bamix", Photo = "https://pp.vk.me/c630516/v630516851/17d41/3DClFMPdBSk.jpg" };
+            Post post = new Post()
+            {
+                Name = "test name",
+                Author = author,
+                Id = 1L,
+                Rating = 3.2f,
+                UserRating = 2f,
+                Cover = "https://pp.vk.me/c633523/v633523851/9920/E93Q5a_KRzE.jpg",
+                CreateTime = DateTime.Now,
+                MPAARating = new MPAARating() { Photo = "http://1.bp.blogspot.com/-w8rJ7fH6CNQ/TpusFvSdEfI/AAAAAAAAAqw/KiCGps3Cn3s/s1600/pg.png", Description = "PG" },
+                Tags = tags
+            };
+            Page page1 = new Page() { Preview = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Petit_Sammy_%C3%A9ternue.jpg/275px-Petit_Sammy_%C3%A9ternue.jpg" };
+            Page page2 = new Page() { Preview = "http://znayka.org.ua/uploads/6fd0644155/e83218673d.jpg" };
+            Page page3 = new Page() { Preview = "http://www.gamer.ru/system/attached_images/images/000/339/387/normal/stalkerlegend-ucoz-ru_rdr_comix_04.jpg" };
+            Page page4 = new Page() { Preview = "http://acomics.ru/upload/!c/!import/jonbot-vs-martha/000008-3iey7amix7.jpg" };
+            Page page5 = new Page() { Preview = "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcRNb62B-C8g7TUICBBygWgMyfNyLkIvs2Fg6VBYr00rE4Szuhw4" };
+            post.Pages.Add(page1);
+            post.Pages.Add(page2);
+            post.Pages.Add(page3);
+            post.Pages.Add(page4);
+            post.Pages.Add(page5);
+            return View(post);
         }
+
+
     }
 }

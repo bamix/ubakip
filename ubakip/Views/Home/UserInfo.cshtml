@@ -1,8 +1,9 @@
 ﻿@model ubakip.Models.UserInfo
 
+
 <div class="row">
     <div class="col-md-3 user-avatar">
-        <img src=@Model.User.Photo class="img-responsive center-block" alt=@Model.User.Nickname />
+        <a href=@Model.User.Photo><img src=@Model.User.Photo class="img-responsive center-block" alt=@Model.User.Nickname /></a> 
         </div>
     <div class="col-md-9 user-info">
         <h1>@Model.FirstName @Model.LastName</h1>
@@ -42,11 +43,23 @@
 </div>
 </div>
 
-<div class="comment-container">
-    @{
-        foreach (var c in Model.Comments)
-        {
-            Html.RenderPartial("CommentPartial", c);
+
+    <input type="text" ng-model="vm.food" placeholder="Enter food" />
+
+    <p>Sriracha sauce is great with {{vm.food}}!</p>
+
+   {{2+3}}
+
+
+    <div class="comment-container">
+        @{
+            foreach (var c in Model.Comments)
+            {
+                Html.RenderPartial("CommentPartial", c);
+            }
         }
-    }
-</div>
+
+
+    </div>
+
+

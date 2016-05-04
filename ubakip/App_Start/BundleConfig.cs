@@ -16,7 +16,8 @@ namespace ubakip
 
             bundles.Add(new ScriptBundle("~/bundles/angular").Include(
                        "~/Scripts/angular.min.js",
-                        "~/Scripts/angularbase.js"));
+                        "~/Scripts/angularbase.js",
+                        "~/Scripts/main.js"));
 
 
             // Use the development version of Modernizr to develop with and learn from. Then, when you're

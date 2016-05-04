@@ -1,0 +1,26 @@
+﻿@model ubakip.Models.Post
+
+
+<h2>@Model.Name</h2>
+<div class="pages-container sortable list-group" id="simpleList">
+   
+        @{
+            foreach (var p in Model.Pages)
+            {
+                Html.RenderPartial("PagePreview", p);
+            }
+        }
+   
+</div>
+
+<script>
+    Sortable.create(simpleList, { /* options */ });
+
+    // List with handle
+    Sortable.create(listWithHandle, {
+        handle: '.glyphicon-move',
+        animation: 150
+    });
+</script>
+
+
