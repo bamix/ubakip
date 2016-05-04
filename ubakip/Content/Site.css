@@ -1,0 +1,45 @@
+﻿body {
+    padding-top: 50px;
+    padding-bottom: 20px;
+}
+
+/* Set padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Override the default bootstrap behavior where horizontal description lists 
+   will truncate terms that are too long to fit in the left column 
+*/
+.dl-horizontal dt {
+    white-space: normal;
+}
+
+/* Set width on the form input elements since they're 100% wide by default */
+input,
+select,
+textarea {
+    max-width: 280px;
+}
+
+@font-face {
+	font-family: 'BuxtonSketch';
+	src: url('../fonts/BuxtonSketch.eot');
+	src: local('BuxtonSketch'), url('../fonts/BuxtonSketch.woff') format('woff'), url('../fonts/BuxtonSketch.ttf') format('truetype');
+}
+
+.navbar-inverse {
+  background-color: #fe832d;
+  border-color: #f97f29;
+}
+
+.navbar-brand {
+  font-size: 36px;
+  font-family: BuxtonSketch;
+  padding:0;
+}
+
+.navbar-inverse .navbar-brand {
+  color: #000000;
+}

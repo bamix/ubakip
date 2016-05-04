@@ -1,0 +1,169 @@
+.content
+{
+   
+}
+
+.navbar-logo{
+    width:10%;
+    padding:0;
+}
+.sidebar
+{
+    /*border:solid;
+    border-width:1px;
+    border-color: black;
+    border-radius:10px;*/
+    
+    margin:auto;
+}
+.sidebar .list-group-item
+{
+   padding:5px;
+}
+.mpaa-image{
+    height:30px;
+    margin-left:10px;
+}
+
+.post-info{
+  margin:1%;
+}
+.post-info h2{
+   margin:auto;
+}
+.avatar
+{
+    width:90%;    
+    margin-top:10%;
+    padding:0;
+}
+
+.avatar-div
+{   
+    padding:0;    
+}
+
+.non-padding
+{
+    margin:0px;
+    padding:0px;
+}
+.post-preview
+{
+    margin:2%;    
+}
+.post-header
+{
+    background:#c6c6c6;
+    padding:0px;
+    margin:0px;
+    border-bottom:dashed;
+    border-width:2px;
+}
+.tags-container
+{
+    margin:2%;
+    color:green;
+}
+
+.tag{
+    margin:0.1%;
+    background:#9c9999;
+    padding-left:5%;   
+    padding-right:5%;
+     display: inline-block;
+    border:solid;
+    border-width:1px;
+    border-color: black;
+    border-radius:10px;
+    color:green;
+}
+.tag a{
+    color:black;
+}
+
+.tags-container .tag{  
+     padding-left:1%;   
+    padding-right:1%;
+}
+
+.tag:hover
+{
+    background:#cccccc;
+}
+
+.post{
+     border:dashed;
+    border-color: transparent;
+    border-radius:10px;
+    border-width:0px;
+    background: #e9e9e9;
+    padding:0px;    
+    overflow:hidden;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5); 
+    margin:2%;
+}
+
+
+.user-avatar{
+    margin-top:2%;
+}
+
+.user-info{
+
+}
+
+div.user-rating
+{     
+   width:35%;
+   display:inline-block;  
+}
+
+.temp{
+   
+}
+
+.medal{
+    display:inline-block;
+    width:10%;
+    margin:1%;  
+}
+.medal img
+{
+ width:100%;
+}
+
+.medals-container
+{
+    display:inline-block;
+}
+
+.comment-container{
+    
+}
+.comment{
+   box-shadow: 0 0 10px rgba(0,0,0,0.5); 
+   margin-top:2%;
+   padding:1%;
+   border:solid;
+   border-color:transparent;
+   border-radius:10%;
+   overflow:hidden;
+}
+.comment-info
+{   
+    border-right:dashed;
+    border-color:black;
+    border-width:0.4vmin;
+    height:100%;
+    text-align:center;
+}
+
+.comment-info .avatar-div{
+    margin:auto;
+    width:80%;
+}
+
+.comment-text{
+  
+}

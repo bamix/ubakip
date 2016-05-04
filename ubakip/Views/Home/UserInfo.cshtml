@@ -1,0 +1,52 @@
+﻿@model ubakip.Models.UserInfo
+
+<div class="row">
+    <div class="col-md-3 user-avatar">
+        <img src=@Model.User.Photo class="img-responsive center-block" alt=@Model.User.Nickname />
+        </div>
+    <div class="col-md-9 user-info">
+        <h1>@Model.FirstName @Model.LastName</h1>
+         @@@Model.User.Nickname
+        <h4>
+            Rating:
+        </h4>
+        <div class="user-rating">
+            <div class="temp">
+                <form action="">
+                    @{  int averageRaring = (int)Math.Round(Model.Rating);
+                        for (int i = 5; i >= 1; i--)
+                        {
+                            string Star = "star-" + i.ToString();
+                            string Class = "star userchecked" + Star;
+                            string Checked = "";
+                            if (i == averageRaring) { Checked = "checked"; }
+                            <input class="@Class" id=@Star type="radio" name="star" @Checked />
+                            <label class="@Class" for=@Star></label>
+                        }
+                    }
+                </form>
+            </div>
+</div>
+        <h4> Medals:</h4>
+        <div class="medals-container">
+    @{
+        foreach (var m in Model.Medals)
+        {
+            Html.RenderPartial("MedalPartial", m);
+        }
+     }
+    </div>
+    
+        <h4>About:</h4>
+            @Model.About
+</div>
+</div>
+
+<div class="comment-container">
+    @{
+        foreach (var c in Model.Comments)
+        {
+            Html.RenderPartial("CommentPartial", c);
+        }
+    }
+</div>

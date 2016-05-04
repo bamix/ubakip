@@ -1,0 +1,16 @@
+﻿@model ubakip.Models.Comment
+
+<div class="comment">
+    <div class="row">
+        <div class="col-xs-2 comment-info">
+            <div class="avatar-div ">
+                <a href="#"> <img src=@Model.FromUser.Photo class="img-circle avatar center-block" alt=@Model.FromUser.Nickname /></a>
+            </div>
+            <a href="#"> @Model.FromUser.Nickname</a>          
+</div>
+        <div class="col-xs-10 comment-text">
+            @Model.Text
+        </div>
+    </div>
+</div>
+
