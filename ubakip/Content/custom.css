@@ -248,7 +248,9 @@ div.user-rating
 
 .pages-container
 {
-    
+    display:inline-block;
+    margin:2%;
+    background:red;
 }
 
 .page-preview
@@ -260,7 +262,6 @@ div.user-rating
     background:#818181;
     padding:0.5%;
     border:dashed;
-    border-radius:10px;
 }
 
 .page-preview .img-responsive{   
