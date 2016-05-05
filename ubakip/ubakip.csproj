@@ -228,6 +228,8 @@
     <Content Include="Content\custom.css" />
     <Content Include="Content\Rating.css" />
     <Content Include="Content\Images\medal.png" />
+    <Content Include="Content\rzslider.min.css" />
+    <Content Include="Content\slider.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -257,6 +259,8 @@
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\drag-and-drop-pages.js" />
+    <Content Include="Scripts\interact.js" />
+    <Content Include="Scripts\interact.min.js" />
     <Content Include="Scripts\jquery-2.2.3.js" />
     <Content Include="Scripts\jquery-2.2.3.min.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
@@ -273,6 +277,8 @@
     <Content Include="Scripts\respond.matchmedia.addListener.min.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\comment.js" />
+    <Content Include="Scripts\rzslider.min.js" />
+    <Content Include="Scripts\slider.js" />
     <Content Include="Scripts\sortable.min.js" />
     <Content Include="Scripts\_references.js" />
     <Content Include="Web.config" />
@@ -313,6 +319,7 @@
     <Content Include="Views\Shared\CommentPartial.cshtml" />
     <Content Include="Views\Home\ComicsView.cshtml" />
     <Content Include="Views\Shared\PagePreview.cshtml" />
+    <Content Include="Views\Home\ComicsMaker.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

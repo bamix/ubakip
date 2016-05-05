@@ -1,0 +1,515 @@
+﻿
+@{
+    ViewBag.Title = "ComicsMaker";
+}
+
+Left:<input id="left" /> Right:<input id="right" /><br />
+Top:<input id="top" /> Bottom:<input id="bottom" /><br />
+<br />
+x1:<input id="x1" /> y1:<input id="y1" /><br />
+x2:<input id="x2" /> y2:<input id="y2" /><br />
+x3:<input id="x3" /> y3:<input id="y3" /><br />
+
+r1:<input id="r1" /> t1:<input id="t1" /><br />
+r2:<input id="r2" /> t2:<input id="t2" /><br />
+r3:<input id="r3" /> t3:<input id="t3" /><br />
+
+
+d1:<input id="d1" /> d2:<input id="d2" /><br />
+d3:<input id="d3" /> d4:<input id="d4" /><br />
+<div class="row">
+    <div class="col-md-8">
+        <div class="wrapper">
+            <div class="main-form center-block">
+                <div class="square" id="sq1">
+                    <img src="https://pp.vk.me/c630516/v630516851/17d38/Z2XK_ltiTCU.jpg" id="img1" onload="ImageLoaded(this)" class="imagetest" />
+                </div>
+                <div class="square"></div>
+                <div class="rectangle"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4" ng-controller="sliderController as sliders" ng-cloak="" ng-app="MyApp">
+        <script src="~/Scripts/slider.js"></script>
+
+        <rzslider rz-slider-model="sliders.slider1.value" rz-slider-options="sliders.slider1.options"></rzslider>
+        <rzslider rz-slider-model="sliders.slider2.value" rz-slider-options="sliders.slider2.options"></rzslider>
+        @*<div class="con"><div id="slider_rotate" class="slider"></div></div>
+        <div class="con"><div id="slider_scale" class="slider"></div></div>
+        <div class="con"><div id="slider_move" class="slider"></div></div>*@
+    </div>
+</div>
+
+ <script>
+    var rotationAngle = 0,
+     scale = 1,
+     posX = 0,
+     posY = 0,
+     height = 0,
+     width = 0,
+     divHeight = 0,
+     divWidth = 0,
+     StraightType = {
+         Vertical: { value: 0 },
+         Horizontal: { value: 1 },
+         Custom: { value: 2 }
+     };
+
+    interact('.slider')                   // target the matches of that selector
+      .origin('self')                     // (0, 0) will be the element's top-left
+      .restrict({ drag: 'self' })           // keep the drag within the element
+      .inertia(true)                      // start inertial movement if thrown
+      .draggable({                        // make the element fire drag events
+          max: 1                     // allow drags on multiple elements
+      })
+      .on('dragmove', function (event) {  // call this function on every move
+          var sliderWidth = interact.getElementRect(event.target.parentNode).width,
+              value = event.pageX / sliderWidth;
+
+
+          if (event.target.id == "slider_rotate") {
+              event.target.style.paddingLeft = (value * 100) + '%';
+              value = value * 360;
+              event.target.setAttribute('data-value', value.toFixed(0));
+              rotationAngle = value;
+              Transform(document.getElementById("img1"));
+          }
+          if (event.target.id == "slider_scale") {
+              Scale(event.target, value);
+           }
+      });
+
+    interact.maxInteractions(Infinity);   // Allow multiple interactions
+
+    interact('.imagetest')
+    .draggable({
+    autoScroll: true,
+    onmove: dragMoveListener
+});
+
+    function Scale(target,value)
+    {
+       var newValue = value * 9 + 1;
+        if (fixScale(document.getElementById("img1"), newValue, scale)) {
+            Transform(document.getElementById("img1"));
+            target.style.paddingLeft = (value * 100) + '%';
+            target.setAttribute('data-value', newValue.toFixed(2));
+        }
+        else {
+            var nearPoint = FindNearPoint(document.getElementById("img1")),
+                center = GetCenter(document.getElementById("sq1")),
+                offset = {x:20,y:20};//{ x: (center.x - nearPoint.x)/20, y: (center.y - nearPoint.y)/20 };
+            document.getElementById("r2").value = offset.x;
+            document.getElementById("t2").value = offset.y;
+
+            if (CheckContaining(element, AddScaleChanges(newValue, scale, offset))) {
+                document.getElementById("x3").value = "true";
+                scale = newScale;
+                posX += offset.x / scale; posY += offset.y / scale;
+                Transform(document.getElementById("img1"));
+                target.style.paddingLeft = (value * 100) + '%';
+                target.setAttribute('data-value', newValue.toFixed(2));
+            }
+          }
+    }
+
+    function FindNearPoint(element)
+    {
+
+        var k = GetTopLeftImagePoint(element), k2 = GetBottomRightImagePoint(element);
+        var center = GetCenter(document.getElementById("sq1"));
+        //document.getElementById("d1").value = GetDistance(GetBottomLeftImagePoint(element), center);
+        //document.getElementById("d2").value = GetDistance(GetBottomRightImagePoint(element), center);
+        //document.getElementById("d3").value = GetDistance(GetTopLeftImagePoint(element), center);
+        //document.getElementById("d4").value = GetDistance(GetTopRightImagePoint(element), center);
+        //return GetBottomLeftImagePoint(element);
+            points = [GetBottomLeftImagePoint(element), GetBottomRightImagePoint(element),
+                     GetTopLeftImagePoint(element), GetTopRightImagePoint(element)],
+            minDist = GetDistance(points[0], center), id = 0;
+        document.getElementById("d1").value = minDist;
+        for (var i = 1; i < points.length; i++) {
+            var foo = GetDistance(points[i], center);
+            document.getElementById("d"+(i+1).toString()).value = foo;
+            if (foo < minDist) { minDist = foo; id = i; }
+        }
+
+        return points[id];
+     }
+
+    function GetDistance(point1,point2)
+    {
+        return Math.sqrt(Math.pow(point1.x - point2.x, 2) + Math.pow(point1.y - point2.y, 2));
+    }
+
+    function Transform(element) {
+        element.style.transformOrigin = (Math.round(divWidth / 2)).toString() + "px " + (Math.round(divHeight / 2)).toString() + "px";
+        element.style.webkitTransform = element.style.transform = "rotate(" + rotationAngle + "deg) scale(" + scale + ")"+
+        "translate(" + posX + "px, " + posY + "px)";
+    }
+
+    function fixScale(element, newScale, oldScale)
+    {
+        var offset = { x: 0, y: 0 };
+        if (CheckContaining(element, AddScaleChanges(newScale, oldScale, offset))) { document.getElementById("t1").value = "true"; scale = newScale; return true; }
+        return false;
+    }
+
+    function dragMoveListener(event) {
+        delta = { dx: event.dx, dy: event.dy };
+        var deltas = FixDeltas(event.target, delta);
+        if (deltas.dx != 0 || deltas.dy!=0) {
+            Move(event.target, deltas);
+        }
+    }
+
+    function AddTranslateChanges(delta)
+    {
+        var dx = delta.dx, dy = delta.dy,
+                    divRect = document.getElementById("sq1").getBoundingClientRect();
+        var vertex1 = { x: divRect.left - dx, y: divRect.top - dy },
+            vertex2 = { x: divRect.right - dx, y: divRect.top - dy },
+            vertex3 = { x: divRect.right - dx, y: divRect.bottom - dy },
+            vertex4 = { x: divRect.left - dx, y: divRect.bottom - dy };
+        return { point1: vertex1, point2: vertex2, point3: vertex3, point4: vertex4 };
+    }
+
+    function AddScaleChanges(newScale, oldScale,offset) {
+        var dx = divWidth * (newScale - oldScale) / 4;
+        var dy = divHeight * (newScale - oldScale) / 4;
+
+
+        var divRect = document.getElementById("sq1").getBoundingClientRect();
+        document.getElementById("t1").value = divRect.left;
+      //  document.getElementById("t2").value = divRect.top;
+        var vertex1 = { x: divRect.left + dx + offset.x, y: divRect.top + dy + offset.y },
+            vertex2 = { x: divRect.right - dx + offset.x, y: divRect.top + dy + offset.y },
+            vertex3 = { x: divRect.right - dx + offset.x, y: divRect.bottom - dy + offset.y },
+            vertex4 = { x: divRect.left + dx + offset.x, y: divRect.bottom - dy + offset.y };
+
+        document.getElementById("r1").value = vertex1.x;
+       // document.getElementById("r2").value = vertex1.y;
+
+        return { point1: vertex1, point2: vertex2, point3: vertex3, point4: vertex4 };
+    }
+
+    function CheckContaining(element, rect)
+    {
+        document.getElementById("x1").value = "false";
+        document.getElementById("x2").value = "false";
+        document.getElementById("y1").value = "false";
+        document.getElementById("y2").value = "false";
+        //if (CheckVertex(element, rect.point1)) document.getElementById("x1").value = "true";
+        if (CheckVertex(element, rect.point1)) {
+            document.getElementById("x1").value = "true";
+            if (CheckVertex(element, rect.point2)) {
+                document.getElementById("x2").value = "true";
+                if (CheckVertex(element, rect.point3)) {
+                    document.getElementById("y1").value = "true";
+                    if (CheckVertex(element, rect.point4)) {
+                        document.getElementById("y2").value = "true";
+                        return  true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    function FixDeltas(element, delta) {
+        var primaryDy = delta.dy;
+        var dx = delta.dx, dy = delta.dy;
+        if (!CheckContaining(element, AddTranslateChanges(delta))) {
+            delta.dy = 0; dy = 0;
+            if (!CheckContaining(element, AddTranslateChanges(delta))) {
+                delta.dy = primaryDy; dy = primaryDy;
+                delta.dx = 0; dx = 0;
+                if (!CheckContaining(element, AddTranslateChanges(delta))) {
+                    dx = 0; dy = 0;
+                }
+            }
+          }
+        return { dx: dx, dy: dy };
+    }
+
+    function CheckVertex(element,vertex)
+    {
+        var foo = Deltas(GetExtrimLeftPoint(element, rotationAngle), vertex);
+        var bar = Deltas(GetExtrimRightPoint(element, rotationAngle), vertex);
+        document.getElementById("top").value = foo.delta1;
+        document.getElementById("left").value = foo.delta2;
+        document.getElementById("right").value = bar.delta1;
+        document.getElementById("bottom").value = bar.delta2;
+        if (foo.delta1 >= 0 && foo.delta2 >= 0 && bar.delta1 <= 0 && bar.delta2 <= 0) return true;
+        else return false;
+    }
+
+    function Deltas(point, vertex)
+    {
+        var Straight = GetStraightParams(point.x, point.y, -rotationAngle - 90), delta1 = 0, delta2 = 0;
+        var Straight2 = GetStraightParams(point.x, point.y, -rotationAngle);
+        if (Straight.type == StraightType.Vertical) {
+            delta1 = vertex.x - point.x;
+            delta2 = point.y - vertex.y;
+        }
+        else if (Straight.type == StraightType.Horizontal) {
+            delta1 = point.y - vertex.y;
+            delta2 = vertex.x - point.x;
+        }
+        else {
+            if (rotationAngle % 180 < 90) {
+                delta1 = vertex.y - (vertex.x * Straight.k + Straight.b);
+                delta2 = (vertex.x * Straight2.k + Straight2.b) - vertex.y;
+            }
+            else {
+                delta1 = (vertex.x * Straight.k + Straight.b) - vertex.y;
+                delta2 = vertex.y - (vertex.x * Straight2.k + Straight2.b);
+            }
+        }
+        return { delta1: delta1, delta2: delta2 };
+    }
+
+    function Move(element, deltas)
+    {
+        var newBasis = RotateBasis(deltas.dx, deltas.dy, rotationAngle);
+        posX = posX + newBasis.x / scale;
+        posY = posY + newBasis.y / scale;
+        Transform(element);
+    }
+
+    //function CheckBorder(element, delta)
+    //{
+    //    var dx=delta.dx, dy=delta.dy;
+    //    if (dx > 0) {
+    //        if (!CheckLeftBorder(element, dx, dy)) dx = 0;
+    //    }
+    //    else if (!CheckRightBorder(element, dx, dy)) dx = 0;
+    //    if (dy > 0) {
+    //        if (!CheckTopBorder(element, dx, dy)) dy = 0;
+    //    }
+    //    else if (!CheckBottomBorder(element, dx, dy)) dy = 0;
+    //    return { dx: dx, dy: dy };
+    //}
+
+    //function CheckLeftBorder(element, dx , dy) {
+    //    var divRect = document.getElementById("sq1").getBoundingClientRect(),
+    //        Point = GetExtrimLeftPoint(element, rotationAngle),
+    //        Rect = SetRect(divRect, divRect.left - dx, divRect.top - dy, divRect.bottom - dy),
+    //        t = GetDeltas(Point, Rect, true);
+    //    if (t.delta1 >= 0 && t.delta2 >= 0) return true;
+    //    return false;
+    //}
+
+    //function CheckRightBorder(element, dx, dy) {
+    //    var divRect = document.getElementById("sq1").getBoundingClientRect(),
+    //       Point = GetExtrimRightPoint(element, rotationAngle),
+    //       Rect = SetRect(divRect, divRect.right - dx, divRect.bottom - dy, divRect.top - dy),
+    //       t = GetDeltas(Point, Rect, true);
+    //    if (t.delta1 <= 0 && t.delta2 <= 0) return true;
+    //    return false;
+    //}
+
+    //function CheckTopBorder(element, dx, dy) {
+    //    var divRect = document.getElementById("sq1").getBoundingClientRect(),
+    //        Point = GetExtrimTopPoint(element, rotationAngle),
+    //        Rect = SetRect(divRect, divRect.top - dy, divRect.left - dx, divRect.right - dx),
+    //        t = GetDeltas(Point, Rect,false);
+    //    if (t.delta1 >= 0 && t.delta2 >= 0) return true;
+    //    return false;
+    //}
+    //GetBottomRightImagePoint
+    //function CheckBottomBorder(element, dx, dy) {
+    //    var divRect = document.getElementById("sq1").getBoundingClientRect(),
+    //        Point = GetExtrimBottomPoint(element, rotationAngle),
+    //        Rect = SetRect(divRect, divRect.bottom - dy, divRect.right - dx, divRect.left - dx),
+    //        t = GetDeltas(Point, Rect,false);
+    //    if (t.delta1 <= 0 && t.delta2 <= 0) return true;
+    //    return false;
+    //}
+
+    //function SetRect(source , borderValue,vertex1,vertex2)
+    //{
+    //    var result = {};
+    //    for (var key in source) {
+    //        result[key] = source[key];
+    //    }
+    //    result.borderValue = borderValue;
+    //    result.vertex1 = vertex1;
+    //    result.vertex2 = vertex2;
+    //    return result;
+    //}
+
+    //function GetDeltas(Point, divRect, isVerticalBorder) {
+    //    var Straight = GetStraightParams(Point.x, Point.y, -rotationAngle - 90),
+    //        deltas;
+    //    if (isVerticalBorder) {
+    //        deltas = GetStraightParamsForVerticalBorder(Straight, Point, divRect);
+    //    }
+    //    else deltas = GetStraightParamsForHorizontalBorder(Straight, Point, divRect);
+    //    return { delta1: deltas.delta1, delta2: deltas.delta2 };
+    //}
+
+    //function GetStraightParamsForVerticalBorder(Straight,Point,divRect)
+    //{
+    //    var delta1 = 0, delta2 = 0;
+    //    if (Straight.type == StraightType.Vertical) {
+    //        delta1 =  divRect.borderValue - Point.x ;
+    //    }
+    //    else if (Straight.type == StraightType.Horizontal) {
+    //        delta2 = CheckSecondBorder(Point, divRect, true);
+    //    }
+    //    else {
+    //        var vertex = rotationAngle % 180 < 90 ? divRect.vertex1 : divRect.vertex2;
+    //        delta1 = divRect.borderValue - (vertex - Straight.b) / Straight.k;
+    //        delta2 = CheckSecondBorder(Point, divRect,true);
+    //    }
+    //    return { delta1: delta1, delta2: delta2 };
+    //}
+
+    //function GetStraightParamsForHorizontalBorder(Straight,Point,divRect)
+    //{
+    //    var delta1 = 0, delta2 = 0;
+    //    if (Straight.type == StraightType.Vertical) {
+    //        delta2 = CheckSecondBorder(Point, divRect, false);
+    //    }
+    //    else if (Straight.type == StraightType.Horizontal) {
+    //        delta1 =  divRect.borderValue - Point.y;
+    //    }
+    //    else {
+    //        var vertex = rotationAngle % 180 < 90 ? divRect.vertex1 : divRect.vertex2;
+    //        delta1 = divRect.borderValue - (Straight.k * vertex + Straight.b);
+    //        delta2 = CheckSecondBorder(Point, divRect, false);
+    //    }
+    //    return { delta1: delta1, delta2: delta2 };
+    //}
+
+    //function CheckSecondBorder(Point, divRect, isVerticalBorder) {
+    //    var Straight = GetStraightParams(Point.x, Point.y, -rotationAngle);
+    //    if (Straight.type == StraightType.Vertical) {
+    //       return isVerticalBorder ? divRect.borderValue - Point.x : 0;
+    //    }
+    //    else if (Straight.type == StraightType.Horizontal) {
+    //        return isVerticalBorder ? 0 : divRect.borderValue - Point.y;
+    //    }
+    //    else {
+    //        var vertex = rotationAngle % 180 < 90 ? divRect.vertex2 : divRect.vertex1;
+    //        if (isVerticalBorder) return (divRect.borderValue - (vertex - Straight.b) / Straight.k);
+    //        return (divRect.borderValue - (Straight.k * vertex + Straight.b));
+    //    }
+    //}
+
+    function GetExtrimLeftPoint(element,angle)
+    {
+        if (angle <= 90) return GetBottomLeftImagePoint(element);
+        else if (angle <= 180) return GetBottomRightImagePoint(element);
+        else if (angle <= 270) return GetTopRightImagePoint(element);
+        else return GetTopLeftImagePoint(element);
+    }
+
+    function GetExtrimRightPoint(element, angle) {
+        if (angle <= 90) return GetTopRightImagePoint (element);
+        else if (angle <= 180) return GetTopLeftImagePoint (element);
+        else if (angle <= 270) return GetBottomLeftImagePoint(element);
+        else return GetBottomRightImagePoint(element);
+    }
+
+    function GetExtrimTopPoint(element, angle) {
+        if (angle <= 90) return GetTopLeftImagePoint(element);
+        else if (angle <= 180) return GetBottomLeftImagePoint(element);
+        else if (angle <= 270) return GetBottomRightImagePoint(element);
+        else return GetTopRightImagePoint(element);
+    }
+
+    function GetExtrimBottomPoint(element, angle) {
+        if (angle <= 90) return GetBottomRightImagePoint(element);
+        else if (angle <= 180) return GetTopRightImagePoint(element);
+        else if (angle <= 270) return GetTopLeftImagePoint(element);
+        else return GetBottomLeftImagePoint(element);
+    }
+
+    function GetTopLeftImagePoint(element)
+    {
+        return GetImagePoint(element, -width / 2, -height / 2);
+    }
+
+    function GetBottomLeftImagePoint(element) {
+        return GetImagePoint(element, -width / 2, height / 2);
+    }
+
+    function GetTopRightImagePoint(element) {
+        return GetImagePoint(element, width / 2, -height / 2);
+    }
+
+    function GetBottomRightImagePoint(element) {
+        return GetImagePoint(element, width / 2, height / 2);
+    }
+
+    function GetImagePoint(element,offsetX,offsetY)
+    {
+        var offsetFirstPoint = RotateBasis(offsetX * scale, offsetY * scale, -rotationAngle);
+        var center = GetCenter(element);
+        var x = center.x + offsetFirstPoint.x;
+        var y = center.y + offsetFirstPoint.y;
+        return { x: x, y: y };
+    }
+
+    // this is used later in the resizing and gesture demos
+    window.dragMoveListener = dragMoveListener;
+
+    function RotateBasis(x,y,angle)
+    {
+        var radian = angle * Math.PI / 180,
+        newX = x * Math.cos(radian) + y * Math.sin(radian);
+        newY = -x * Math.sin(radian) + y * Math.cos(radian);
+        return { x: newX, y: newY };
+    }
+
+    function ImageLoaded(element)
+    {
+        if (element.style.height > element.style.width)
+        {
+            element.style.width = "100%"; element.style.height = "auto";
+        }
+        else
+        {
+            element.style.width = "auto"; element.style.height = "100%";
+        }
+    }
+
+    function GetStraightParams(x,y,angle)
+    {
+        var k = 0, b = 0, type = StraightType.Custom;
+        if (Math.abs(angle) % 180 == 0) {
+            type = StraightType.Horizontal;
+        }
+        else if (Math.abs(angle) % 180 ==90)
+        {
+            type = StraightType.Vertical;
+        }
+        else
+        {
+            k = -Math.tan(angle * Math.PI / 180),
+            b = y - k * x;
+        }
+        return { k: k, b: b, type: type }
+    }
+
+    function GetCenter(element)
+    {
+        var elemRect = element.getBoundingClientRect(),
+            x = elemRect.left + elemRect.width / 2,
+            y = elemRect.top + elemRect.height / 2;
+        return { x: x, y: y };
+    }
+
+    $(document).ready(function () {
+        ImageLoaded(document.getElementById("img1"));
+        var imgRect = document.getElementById("img1").getBoundingClientRect();
+        height = imgRect.height;
+        width = imgRect.width;
+        var divRect = document.getElementById("sq1").getBoundingClientRect();
+        divHeight = divRect.height;
+        divWidth = divRect.width;
+
+    });
+    </script>
+

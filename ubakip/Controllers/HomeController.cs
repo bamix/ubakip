@@ -144,6 +144,10 @@ namespace ubakip.Controllers
             return View(post);
         }
 
+        public ActionResult ComicsMaker()
+        {          
+            return View();
+        }
 
     }
 }
