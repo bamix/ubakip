@@ -4,26 +4,11 @@
 }
 @Scripts.Render("~/bundles/interact")
 <script src="~/Scripts/rzslider.min.js"></script>
-Left:<input id="left" /> Right:<input id="right" /><br />
-Top:<input id="top" /> Bottom:<input id="bottom" /><br />
-<br />
-x1:<input id="x1" /> y1:<input id="y1" /><br />
-x2:<input id="x2" /> y2:<input id="y2" /><br />
-x3:<input id="x3" /> y3:<input id="y3" /><br />
-
-r1:<input id="r1" /> t1:<input id="t1" /><br />
-r2:<input id="r2" /> t2:<input id="t2" /><br />
-r3:<input id="r3" /> t3:<input id="t3" /><br />
-
-
-d1:<input id="d1" /> d2:<input id="d2" /><br />
-d3:<input id="d3" /> d4:<input id="d4" /><br />
 <div class="row" ng-controller="comicsMakerController" ng-cloak="" ng-app="MyApp">
     <div class="col-md-8">
         <div class="wrapper">
             <div class="main-form center-block" id="222">
                 <div class="square cell" id="sq1">
-                   @* <img src="https://pp.vk.me/c630516/v630516851/17d38/Z2XK_ltiTCU.jpg" id="img1" onload="ImageLoaded(this)" class="imagetest" />*@
                 </div>
                 <div class="square cell" id="sq2"></div>
                 <div class="rectangle cell" id="sq3"></div>
@@ -37,113 +22,4 @@ d3:<input id="d3" /> d4:<input id="d4" /><br />
     </div>
 </div>
 
- <script>
-    var rotationAngle = 0,
-     scale = 1,
-     posX = 0,
-     posY = 0,
-     height = 0,
-     width = 0,
-     divHeight = 0,
-     divWidth = 0,
-     StraightType = {
-         Vertical: { value: 0 },
-         Horizontal: { value: 1 },
-         Custom: { value: 2 }
-     };
-
-
-
-    function Scale(target,value)
-    {
-       var newValue = value * 9 + 1;
-        if (fixScale(document.getElementById("img1"), newValue, scale)) {
-            Transform(document.getElementById("img1"));
-            target.style.paddingLeft = (value * 100) + '%';
-            target.setAttribute('data-value', newValue.toFixed(2));
-        }
-        else {
-            var nearPoint = FindNearPoint(document.getElementById("img1")),
-                center = GetCenter(document.getElementById("sq1")),
-                offset = {x:20,y:20};//{ x: (center.x - nearPoint.x)/20, y: (center.y - nearPoint.y)/20 };
-            document.getElementById("r2").value = offset.x;
-            document.getElementById("t2").value = offset.y;
-
-            if (CheckContaining(element, AddScaleChanges(newValue, scale, offset))) {
-                document.getElementById("x3").value = "true";
-                scale = newScale;
-                posX += offset.x / scale; posY += offset.y / scale;
-                Transform(document.getElementById("img1"));
-                target.style.paddingLeft = (value * 100) + '%';
-                target.setAttribute('data-value', newValue.toFixed(2));
-            }
-          }
-    }
-
-    function FindNearPoint(element)
-    {
-
-        var k = GetTopLeftImagePoint(element), k2 = GetBottomRightImagePoint(element);
-        var center = GetCenter(document.getElementById("sq1"));
-        //document.getElementById("d1").value = GetDistance(GetBottomLeftImagePoint(element), center);
-        //document.getElementById("d2").value = GetDistance(GetBottomRightImagePoint(element), center);
-        //document.getElementById("d3").value = GetDistance(GetTopLeftImagePoint(element), center);
-        //document.getElementById("d4").value = GetDistance(GetTopRightImagePoint(element), center);
-        //return GetBottomLeftImagePoint(element);
-            points = [GetBottomLeftImagePoint(element), GetBottomRightImagePoint(element),
-                     GetTopLeftImagePoint(element), GetTopRightImagePoint(element)],
-            minDist = GetDistance(points[0], center), id = 0;
-        document.getElementById("d1").value = minDist;
-        for (var i = 1; i < points.length; i++) {
-            var foo = GetDistance(points[i], center);
-            document.getElementById("d"+(i+1).toString()).value = foo;
-            if (foo < minDist) { minDist = foo; id = i; }
-        }
-
-        return points[id];
-     }
-
-    function GetDistance(point1,point2)
-    {
-        return Math.sqrt(Math.pow(point1.x - point2.x, 2) + Math.pow(point1.y - point2.y, 2));
-    }
-
-    function Transform(element) {
-        element.style.transformOrigin = (Math.round(divWidth / 2)).toString() + "px " + (Math.round(divHeight / 2)).toString() + "px";
-        element.style.webkitTransform = element.style.transform = "rotate(" + rotationAngle + "deg) scale(" + scale + ")"+
-        "translate(" + posX + "px, " + posY + "px)";
-    }
-
-    function fixScale(element, newScale, oldScale)
-    {
-        var offset = { x: 0, y: 0 };
-        if (CheckContaining(element, AddScaleChanges(newScale, oldScale, offset))) { document.getElementById("t1").value = "true"; scale = newScale; return true; }
-        return false;
-    }
-
-
-    function AddScaleChanges(newScale, oldScale,offset) {
-        var dx = divWidth * (newScale - oldScale) / 4;
-        var dy = divHeight * (newScale - oldScale) / 4;
-
-
-        var divRect = document.getElementById("sq1").getBoundingClientRect();
-        document.getElementById("t1").value = divRect.left;
-      //  document.getElementById("t2").value = divRect.top;
-        var vertex1 = { x: divRect.left + dx + offset.x, y: divRect.top + dy + offset.y },
-            vertex2 = { x: divRect.right - dx + offset.x, y: divRect.top + dy + offset.y },
-            vertex3 = { x: divRect.right - dx + offset.x, y: divRect.bottom - dy + offset.y },
-            vertex4 = { x: divRect.left + dx + offset.x, y: divRect.bottom - dy + offset.y };
-
-        document.getElementById("r1").value = vertex1.x;
-       // document.getElementById("r2").value = vertex1.y;
-
-        return { point1: vertex1, point2: vertex2, point3: vertex3, point4: vertex4 };
-    }
-
-
-
-
-
-    </script>
 

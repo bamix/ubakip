@@ -7,8 +7,9 @@
     height = 0,
     width = 0,
     isDraging = false,
-    divHeight = $("#sq1").height(),
-    divWidth = $("#sq1").width(),
+    isMinScale = false,
+    divHeight = 0,
+    divWidth = 0,
     StraightType = {
         Vertical: { value: 0 },
         Horizontal: { value: 1 },
@@ -28,26 +29,26 @@
     },
     {
     src: "https://pp.vk.me/c630516/v630516851/17d3a/o2M3HScGpQc.jpg",
-    scale: 2,
+    scale: 1,
     rotate: 90,
     posX: 0,
-    posY: 0,
+    posY: 0.4,
     cellId: "sq2",
     id: "2",
     height: 0,
     width: 0
-}];
-
-    $scope.sliderRotate = {
-        value: 0.0,        
-        options: {
-        id: 'slider-id',        
-            floor: 0,
-            ceil: 360,
-            step: 1,
-            precision: 1    
-    }
-    };
+    },
+    {
+        src: "https://pp.vk.me/c630516/v630516851/17d3a/o2M3HScGpQc.jpg",
+        scale: 2,
+        rotate: 0,
+        posX: 0,
+        posY: 0,
+        cellId: "sq3",
+        id: "3",
+        height: 0,
+        width: 0
+    }];
 
     interact.maxInteractions(Infinity);   // Allow multiple interactions
 
@@ -55,8 +56,7 @@
     .draggable({
         autoScroll: true,
         onmove: dragMoveListener,
-        onend: function (event) {
-            console.log("end draging");
+        onend: function (event) {           
             isDraging = false;
         }
     });
@@ -79,36 +79,11 @@
           }
       });
 
-    function SliderRotateListner(event,value)
-    {
-        if (ImageId == null) return;
-        var newValue = value * 360;
-        SetSliderValue(event.target, value, newValue.toFixed(0));
-        RotationAngle = newValue;
-        $scope.images[ImageId].rotate = RotationAngle;
-        Transform($("#" + ImageId));
-    }
-
-    function SliderScaleListner(event, value) {
-        if (ImageId == null) return;
-        var newValue = value * 9 + 1;
-        SetSliderValue(event.target, value, newValue.toFixed(2));
-        Scale = newValue;
-        $scope.images[ImageId].scale = Scale;
-        Transform($("#" + ImageId));
-    }
-
-    function SetSliderValue(element,offset,value)
-    {
-        element.style.paddingLeft = (offset * 100) + '%';
-        element.setAttribute('data-value', value);
-    }
-
     LoadImages();
 
     $(".imagetest").load(function () {
         var id = $(this).attr('id');
-        if ($(this).height() > $(this).width()) {
+        if ($(this).height() / $(this).parent().height() > $(this).width() / $(this).parent().width()) {
             $(this).css({ 'height': 'auto', 'width': '100%' });
         }
         else {
@@ -116,41 +91,12 @@
         }
         $scope.images[id].height = $(this).height();
         $scope.images[id].width = $(this).width();
+        divHeight = $(this).parent().height();
+        divWidth = $(this).parent().width();
         SetTransformFromImage($scope.images[id]);
         Transform($(this));
     });
-
-    function Transform(element) {
-        element.css(
-            {
-                'transformOrigin': (Math.round(divWidth / 2)).toString() + "px " + (Math.round(divHeight / 2)).toString() + "px",
-                'webkitTransform' : "rotate(" + RotationAngle + "deg) scale(" + Scale + ")" +
-        "translate(" + PosX + "px, " + PosY + "px)",
-                'transform': "rotate(" + RotationAngle + "deg) scale(" + Scale + ")" +
-        "translate(" + PosX + "px, " + PosY + "px)"
-            });
-    }
-
-    function LoadImages() {
-        $(".cell").each(function (i, obj) {
-            for (var i = 0; i < $scope.images.length; i++) {
-                if ($scope.images[i].cellId == obj.id) {
-                    console.log($scope.images[i].cellId);
-                    $(obj).append(' <img src="' + $scope.images[i].src + '" id="' + i + '" class="imagetest" />');
-
-                }
-            }
-        });
-    }
     
-    function SetTransform(rotationAngle,scale,posX,posY)
-    {
-        Scale = scale;
-        RotationAngle = rotationAngle;        
-        PosX = posX;
-        PosY = posY;
-    }
-
     $(".imagetest").click(function () {
         //var Imgid = $(this).attr('id');
         //if (ImageId == Imgid || isDraging) { return; }
@@ -167,35 +113,86 @@
         //SelectCell(id);
     });
 
-    $(".cell").click(function () {
-        id = $(this).attr('id');        
-        SelectCell(id);
-    });
+    function SliderRotateListner(event,value)
+    {
+        if (ImageId == null) return;
+        var newValue = value * 359;
+        SetSliderValue(event.target, value, newValue.toFixed(0));
+        RotationAngle = newValue;
+        $scope.images[ImageId].rotate = RotationAngle;
+        Transform($("#" + ImageId));
+        FixRotate();
+    }
 
-    function SelectCell(elementId) {
-        //$(".cell").each(function (i, obj) {
-        //    if (obj.id == elementId) {
-        //        $(obj).css(
-        //            {
-        //                "border": "solid",
-        //                "border-color": "yellow"
-        //            });
-        //    }
-        //    else {
-        //        $(obj).css(
-        //            {
-        //                "border": "",
-        //                "border-color": "transparent"
-        //            });
-        //    }
-        //});
+    function SliderScaleListner(event, value) {
+        if (ImageId == null) return;
+        var newValue = value * 9 + 1;      
+        if (!TryChangeScale(newValue, event.target, value)) {
+            if( isMinScale) return;
+            isMinScale = true;
+            MoveToCenter();
+            TryChangeScale(newValue, event.target, value);
+        } else { isMinScale = false;}
+    }
 
+    function MoveToCenter()
+    {
+        var cellCenter = GetCenterElementByID($("#" + ImageId).parent().attr("id")),
+            imageCenter = GetCenterElementByID(ImageId),
+            newPosition = RotateBasis((cellCenter.x - imageCenter.x) / Scale, (cellCenter.y - imageCenter.y) / Scale,RotationAngle)
+        SetPosition(PosX+newPosition.x/width, PosY+newPosition.y/height);
+        Transform($("#" + ImageId));
+    }
+
+    function TryChangeScale(newValue, slider, value)
+    {
+        if (fixScale(newValue)) {
+            SetSliderValue(slider, value, newValue.toFixed(2));
+            $scope.images[ImageId].scale = Scale;
+            Transform($("#" + ImageId));
+            return true;
+        }
+        return false;
+    }
+
+    function SetSliderValue(element,offset,value)
+    {
+        element.style.paddingLeft = (offset * 100) + '%';
+        element.setAttribute('data-value', value);
+    }
+
+    function Transform(element) {
+        element.css(
+            {             
+                'webkitTransform' : "rotate(" + RotationAngle + "deg) scale(" + Scale + ")" +
+        "translate(" + PosX.toFixed(5) * 100 + "%, " + PosY.toFixed(5) * 100 + "%)",
+                'transform': "rotate(" + RotationAngle + "deg) scale(" + Scale + ")" +
+        "translate(" + PosX.toFixed(5) * 100 + "%, " + PosY.toFixed(5) * 100 + "%)"
+            });
+    }
+
+    function LoadImages() {
+        $(".cell").each(function (item, obj) {
+            for (var i = 0; i < $scope.images.length; i++) {
+                if ($scope.images[i].cellId == obj.id) {                   
+                    $(obj).append(' <img src="' + $scope.images[i].src + '" id="' + i + '" class="imagetest" />');
+                }
+            }
+        });
+    }
+    
+    function SetTransform(rotationAngle,scale,posX,posY)
+    {
+        Scale = scale;
+        RotationAngle = rotationAngle;        
+        PosX = posX;
+        PosY = posY;
     }
 
     function EnableSliders() {
         var rotate = $scope.images[ImageId].rotate,
             scale = $scope.images[ImageId].scale;
-        SetSliderValue(document.getElementById("slider_rotate"), rotate / 360, rotate.toFixed(0));
+        SetSliderValue(document.getElementById("slider_rotate"), rotate / 359, rotate.toFixed(0));
         SetSliderValue(document.getElementById("slider_scale"), (scale - 1) / 9, scale.toFixed(2));
     }
 
@@ -212,6 +209,7 @@
             SelectWorkImage();
         }
         isDraging = true;
+        isMinScale = false;
         delta = { dx: event.dx, dy: event.dy };
         var deltas = FixDeltas(delta);
         if (deltas.dx != 0 || deltas.dy != 0) {
@@ -230,24 +228,10 @@
         width = $scope.images[ImageId].width;        
     }
 
-    function CheckContaining(rect) {
-        document.getElementById("x1").value = "false";
-        document.getElementById("x2").value = "false";
-        document.getElementById("y1").value = "false";
-        document.getElementById("y2").value = "false";
-        //if (CheckVertex(element, rect.point1)) document.getElementById("x1").value = "true";
-        if (CheckVertex(rect.point1)) {
-            document.getElementById("x1").value = "true";
-            if (CheckVertex(rect.point2)) {
-                document.getElementById("x2").value = "true";
-                if (CheckVertex(rect.point3)) {
-                    document.getElementById("y1").value = "true";
-                    if (CheckVertex(rect.point4)) {
-                        document.getElementById("y2").value = "true";
-                        return true;
-                    }
-                }
-            }
+    function CheckContaining(rect) {        
+        if (CheckVertex(rect.point1) && CheckVertex(rect.point2) &&
+            CheckVertex(rect.point3) && CheckVertex(rect.point4)) {
+                        return true;            
         }
         return false;
     }
@@ -268,6 +252,43 @@
         return { dx: dx, dy: dy };
     }
 
+    function fixScale(newScale) {
+        if (CheckContaining(AddScaleChanges(newScale))) {
+            Scale = newScale; return true;
+        }        
+        return false;
+    }
+
+    function FixRotate() {
+        if (!CheckContaining(AddTranslateChanges({ dx: 0, dy: 0 }))) {
+            MoveToCenter();
+            var minScale = FindMinScale();
+            if (minScale > Scale) {
+                $scope.images[ImageId].scale = Scale = minScale;
+                Transform($("#" + ImageId));
+                SetSliderValue(document.getElementById("slider_scale"), (Scale - 1) / 9, Scale.toFixed(2));
+            }
+        }
+    }
+
+    function FindMinScale()
+    {
+        var diagonal = Math.sqrt(Math.pow(divHeight, 2) + Math.pow(divWidth, 2)),
+            minLength = height < width ? height : width;
+        return diagonal / minLength;
+    }
+    
+    function AddScaleChanges(newScale) {
+        var dx = $("#" + ImageId).width() * (newScale - Scale) / 4,
+            dy = $("#" + ImageId).width() * (newScale - Scale) / 4,
+            divRect = $("#" + ImageId).parent().get(0).getBoundingClientRect(),
+            vertex1 = { x: divRect.left + dx, y: divRect.top + dy },
+            vertex2 = { x: divRect.right - dx, y: divRect.top + dy },
+            vertex3 = { x: divRect.right - dx, y: divRect.bottom - dy },
+            vertex4 = { x: divRect.left + dx, y: divRect.bottom - dy };
+        return { point1: vertex1, point2: vertex2, point3: vertex3, point4: vertex4 };
+    }
+
     function AddTranslateChanges(delta) {
         var dx = delta.dx, dy = delta.dy,
             divRect = $("#" + ImageId).parent().get(0).getBoundingClientRect();
@@ -280,18 +301,14 @@
 
     function CheckVertex(vertex) {
         var foo = Deltas(GetExtrimLeftPoint(RotationAngle), vertex);
-        var bar = Deltas(GetExtrimRightPoint(RotationAngle), vertex);
-        document.getElementById("top").value = foo.delta1;
-        document.getElementById("left").value = foo.delta2;
-        document.getElementById("right").value = bar.delta1;
-        document.getElementById("bottom").value = bar.delta2;
+        var bar = Deltas(GetExtrimRightPoint(RotationAngle), vertex);       
         if (foo.delta1 >= 0 && foo.delta2 >= 0 && bar.delta1 <= 0 && bar.delta2 <= 0) return true;
         else return false;
     }
 
     function Deltas(point, vertex) {
-        var Straight = GetStraightParams(point.x, point.y, -RotationAngle - 90), delta1 = 0, delta2 = 0;
-        var Straight2 = GetStraightParams(point.x, point.y, -RotationAngle);
+        var Straight = GetStraightParams(point.x, point.y, -RotationAngle % 90 - 90), delta1 = 0, delta2 = 0;
+        var Straight2 = GetStraightParams(point.x, point.y, -RotationAngle % 90);
         if (Straight.type == StraightType.Vertical) {
             delta1 = vertex.x - point.x;
             delta2 = point.y - vertex.y;
@@ -301,23 +318,22 @@
             delta2 = vertex.x - point.x;
         }
         else {
-            if (RotationAngle % 180 < 90) {
-                delta1 = vertex.y - (vertex.x * Straight.k + Straight.b);
-                delta2 = (vertex.x * Straight2.k + Straight2.b) - vertex.y;
-            }
-            else {
-                delta1 = (vertex.x * Straight.k + Straight.b) - vertex.y;
-                delta2 = vertex.y - (vertex.x * Straight2.k + Straight2.b);
-            }
+            delta1 = -(Straight.k * vertex.x - vertex.y + Straight.b) / Math.sqrt(Math.pow(Straight.k, 2) + Math.pow(Straight.b, 2));
+            delta2 = (Straight2.k * vertex.x - vertex.y + Straight2.b) / Math.sqrt(Math.pow(Straight2.k, 2) + Math.pow(Straight2.b, 2));   
         }
         return { delta1: delta1, delta2: delta2 };
     }
 
     function Move(deltas) {
         var newBasis = RotateBasis(deltas.dx, deltas.dy, RotationAngle);
-        $scope.images[ImageId].posX = PosX = PosX + newBasis.x / Scale;
-        $scope.images[ImageId].posY = PosY = PosY + newBasis.y / Scale;       
+        SetPosition(PosX + (newBasis.x / Scale) / width, PosY+(newBasis.y / Scale) / height);
         Transform($("#" + ImageId));
+    }
+
+    function SetPosition(posX,posY)
+    {
+        $scope.images[ImageId].posX = PosX = posX;
+        $scope.images[ImageId].posY = PosY = posY;
     }
 
     function GetExtrimLeftPoint(angle) {
@@ -385,5 +401,9 @@
             x = elemRect.left + elemRect.width / 2,
             y = elemRect.top + elemRect.height / 2;
         return { x: x, y: y };
+    }
+
+    function GetDistance(point1, point2) {
+        return Math.sqrt(Math.pow(point1.x - point2.x, 2) + Math.pow(point1.y - point2.y, 2));
     }
 });
