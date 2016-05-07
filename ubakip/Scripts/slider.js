@@ -6,6 +6,7 @@
     ImageId = null,
     height = 0,
     width = 0,
+    isDraging = false,
     divHeight = $("#sq1").height(),
     divWidth = $("#sq1").width(),
     StraightType = {
@@ -53,7 +54,11 @@
     interact('.imagetest')
     .draggable({
         autoScroll: true,
-        onmove: dragMoveListener
+        onmove: dragMoveListener,
+        onend: function (event) {
+            console.log("end draging");
+            isDraging = false;
+        }
     });
 
 
@@ -129,20 +134,6 @@
         Transform($(this));
     });
 
-    //function ImageLoaded(element) {
-    //    if (element.style.height > element.style.width) {
-    //        element.style.width = "100%"; element.style.height = "auto";
-    //    }
-    //    else {
-    //        element.style.width = "auto"; element.style.height = "100%";
-    //    }
-    //    var imgRect = element.getBoundingClientRect(),
-    //    height = imgRect.height,
-    //    width = imgRect.width;
-    //    element.setAttribute('height', height);
-    //    element.setAttribute('width', width);
-    //}
-
     function SetTransform(rotationAngle,scale,posX,posY)
     {
         Scale = scale;
@@ -152,18 +143,19 @@
     }
 
     $(".imagetest").click(function () {
-        var Imgid = $(this).attr('id');
-        if (ImageId == Imgid) { return;}
-        ImageId = Imgid;
-        SetTransformFromImage($scope.images[ImageId]);
-        EnableSliders();
-        var divRect = $("#" + ImageId).parent().get(0).getBoundingClientRect();
-        divHeight = divRect.height;
-        divWidth = divRect.width;
-        height = $scope.images[ImageId].height;
-        width = $scope.images[ImageId].width;
-        var id = $("#" + ImageId).parent().attr('id');
-        SelectCell(id);
+        //var Imgid = $(this).attr('id');
+        //if (ImageId == Imgid || isDraging) { return; }
+        //console.log("click");
+        //ImageId = Imgid;
+        //SetTransformFromImage($scope.images[ImageId]);
+        //EnableSliders();
+        //var divRect = $("#" + ImageId).parent().get(0).getBoundingClientRect();
+        //divHeight = divRect.height;
+        //divWidth = divRect.width;
+        //height = $scope.images[ImageId].height;
+        //width = $scope.images[ImageId].width;
+        //var id = $("#" + ImageId).parent().attr('id');
+        //SelectCell(id);
     });
 
     $(".cell").click(function () {
@@ -171,8 +163,7 @@
         SelectCell(id);
     });
 
-    function SelectCell(elementId)
-    {
+    function SelectCell(elementId) {
         //$(".cell").each(function (i, obj) {
         //    if (obj.id == elementId) {
         //        $(obj).css(
@@ -192,8 +183,7 @@
 
     }
 
-    function EnableSliders()
-    {
+    function EnableSliders() {
         $scope.sliderRotate.options.readOnly = false;
         $scope.sliderScale.options.readOnly = false;
         $scope.sliderRotate.value = RotationAngle;
@@ -202,34 +192,50 @@
 
     function SetTransformFromImage(image) {
         Scale = image.scale;
-        RotationAngle = image.rotate;       
+        RotationAngle = image.rotate;
         PosX = image.posX;
         PosY = image.posY;
     }
 
-
     function dragMoveListener(event) {
-        if (ImageId == null) return;
+        if(!isDraging){
+        ImageId = event.target.id;
+        // if (ImageId == Imgid ) { return; }
+        // console.log("click");
+        // ImageId = Imgid;
+        SetTransformFromImage($scope.images[ImageId]);
+        EnableSliders();
+        var divRect = $("#" + ImageId).parent().get(0).getBoundingClientRect();
+        divHeight = divRect.height;
+        divWidth = divRect.width;
+        height = $scope.images[ImageId].height;
+        width = $scope.images[ImageId].width;
+        var id = $("#" + ImageId).parent().attr('id');
+        SelectCell(id);
+        }
+        isDraging = true;
+       // if (ImageId == null || event.target.id != ImageId) return;
+       // console.log("drag move");
         delta = { dx: event.dx, dy: event.dy };
-        var deltas = FixDeltas(event.target, delta);
+        var deltas = FixDeltas(delta);
         if (deltas.dx != 0 || deltas.dy != 0) {
-            Move(event.target, deltas);
+            Move(deltas);
         }
     }
 
-    function CheckContaining(element, rect) {
+    function CheckContaining(rect) {
         document.getElementById("x1").value = "false";
         document.getElementById("x2").value = "false";
         document.getElementById("y1").value = "false";
         document.getElementById("y2").value = "false";
         //if (CheckVertex(element, rect.point1)) document.getElementById("x1").value = "true";
-        if (CheckVertex(element, rect.point1)) {
+        if (CheckVertex(rect.point1)) {
             document.getElementById("x1").value = "true";
-            if (CheckVertex(element, rect.point2)) {
+            if (CheckVertex(rect.point2)) {
                 document.getElementById("x2").value = "true";
-                if (CheckVertex(element, rect.point3)) {
+                if (CheckVertex(rect.point3)) {
                     document.getElementById("y1").value = "true";
-                    if (CheckVertex(element, rect.point4)) {
+                    if (CheckVertex(rect.point4)) {
                         document.getElementById("y2").value = "true";
                         return true;
                     }
@@ -239,15 +245,15 @@
         return false;
     }
 
-    function FixDeltas(element, delta) {
+    function FixDeltas(delta) {
         var primaryDy = delta.dy;
         var dx = delta.dx, dy = delta.dy;
-        if (!CheckContaining(element, AddTranslateChanges(delta))) {
+        if (!CheckContaining(AddTranslateChanges(delta))) {
             delta.dy = 0; dy = 0;
-            if (!CheckContaining(element, AddTranslateChanges(delta))) {
+            if (!CheckContaining(AddTranslateChanges(delta))) {
                 delta.dy = primaryDy; dy = primaryDy;
                 delta.dx = 0; dx = 0;
-                if (!CheckContaining(element, AddTranslateChanges(delta))) {
+                if (!CheckContaining(AddTranslateChanges(delta))) {
                     dx = 0; dy = 0;
                 }
             }
@@ -265,9 +271,9 @@
         return { point1: vertex1, point2: vertex2, point3: vertex3, point4: vertex4 };
     }
 
-    function CheckVertex(element, vertex) {
-        var foo = Deltas(GetExtrimLeftPoint(element, RotationAngle), vertex);
-        var bar = Deltas(GetExtrimRightPoint(element, RotationAngle), vertex);
+    function CheckVertex(vertex) {
+        var foo = Deltas(GetExtrimLeftPoint(RotationAngle), vertex);
+        var bar = Deltas(GetExtrimRightPoint(RotationAngle), vertex);
         document.getElementById("top").value = foo.delta1;
         document.getElementById("left").value = foo.delta2;
         document.getElementById("right").value = bar.delta1;
@@ -300,60 +306,61 @@
         return { delta1: delta1, delta2: delta2 };
     }
 
-    function Move(element, deltas) {
+    function Move(deltas) {
         var newBasis = RotateBasis(deltas.dx, deltas.dy, RotationAngle);
         PosX = PosX + newBasis.x / Scale;
         PosY = PosY + newBasis.y / Scale;
+        // TODO set posX posY in image array
         Transform($("#" + ImageId));
     }
 
-    function GetExtrimLeftPoint(element, angle) {
-        if (angle < 90) return GetBottomLeftImagePoint(element);
-        else if (angle < 180) return GetBottomRightImagePoint(element);
-        else if (angle < 270) return GetTopRightImagePoint(element);
-        else return GetTopLeftImagePoint(element);
+    function GetExtrimLeftPoint(angle) {
+        if (angle < 90) return GetBottomLeftImagePoint();
+        else if (angle < 180) return GetBottomRightImagePoint();
+        else if (angle < 270) return GetTopRightImagePoint();
+        else return GetTopLeftImagePoint();
     }
 
-    function GetExtrimRightPoint(element, angle) {
-        if (angle < 90) return GetTopRightImagePoint(element);
-        else if (angle < 180) return GetTopLeftImagePoint(element);
-        else if (angle < 270) return GetBottomLeftImagePoint(element);
-        else return GetBottomRightImagePoint(element);
+    function GetExtrimRightPoint(angle) {
+        if (angle < 90) return GetTopRightImagePoint();
+        else if (angle < 180) return GetTopLeftImagePoint();
+        else if (angle < 270) return GetBottomLeftImagePoint();
+        else return GetBottomRightImagePoint();
     }
 
-    function GetExtrimTopPoint(element, angle) {
-        if (angle < 90) return GetTopLeftImagePoint(element);
-        else if (angle < 180) return GetBottomLeftImagePoint(element);
-        else if (angle < 270) return GetBottomRightImagePoint(element);
-        else return GetTopRightImagePoint(element);
+    //function GetExtrimTopPoint( angle) {
+    //    if (angle < 90) return GetTopLeftImagePoint(element);
+    //    else if (angle < 180) return GetBottomLeftImagePoint(element);
+    //    else if (angle < 270) return GetBottomRightImagePoint(element);
+    //    else return GetTopRightImagePoint(element);
+    //}
+
+    //function GetExtrimBottomPoint(angle) {
+    //    if (angle < 90) return GetBottomRightImagePoint();
+    //    else if (angle < 180) return GetTopRightImagePoint();
+    //    else if (angle < 270) return GetTopLeftImagePoint();
+    //    else return GetBottomLeftImagePoint();
+    //}
+
+    function GetTopLeftImagePoint() {
+        return GetImagePoint(-width / 2, -height / 2);
     }
 
-    function GetExtrimBottomPoint(element, angle) {
-        if (angle < 90) return GetBottomRightImagePoint(element);
-        else if (angle < 180) return GetTopRightImagePoint(element);
-        else if (angle < 270) return GetTopLeftImagePoint(element);
-        else return GetBottomLeftImagePoint(element);
+    function GetBottomLeftImagePoint() {
+        return GetImagePoint(-width / 2, height / 2);
     }
 
-    function GetTopLeftImagePoint(element) {
-        return GetImagePoint(element, -width / 2, -height / 2);
+    function GetTopRightImagePoint() {
+        return GetImagePoint(width / 2, -height / 2);
     }
 
-    function GetBottomLeftImagePoint(element) {
-        return GetImagePoint(element, -width / 2, height / 2);
+    function GetBottomRightImagePoint() {
+        return GetImagePoint(width / 2, height / 2);
     }
 
-    function GetTopRightImagePoint(element) {
-        return GetImagePoint(element, width / 2, -height / 2);
-    }
-
-    function GetBottomRightImagePoint(element) {
-        return GetImagePoint(element, width / 2, height / 2);
-    }
-
-    function GetImagePoint(element, offsetX, offsetY) {
+    function GetImagePoint(offsetX, offsetY) {
         var offsetFirstPoint = RotateBasis(offsetX * Scale, offsetY * Scale, -RotationAngle);
-        var center = GetCenter(element);
+        var center = GetCenterElementByID(ImageId);
         var x = center.x + offsetFirstPoint.x;
         var y = center.y + offsetFirstPoint.y;
         return { x: x, y: y };
@@ -381,14 +388,10 @@
         return { k: k, b: b, type: type }
     }
 
-    function GetCenter(element) {
-        var elemRect = element.getBoundingClientRect(),
+    function GetCenterElementByID(elementId) {
+        var elemRect = document.getElementById(elementId).getBoundingClientRect(),
             x = elemRect.left + elemRect.width / 2,
             y = elemRect.top + elemRect.height / 2;
         return { x: x, y: y };
     }
-})
- .run(function (RzSliderOptions) {
-     // show ticks for all sliders
-     RzSliderOptions.options({ disabled: false });
- });
+});
