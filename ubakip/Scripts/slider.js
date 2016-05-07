@@ -1,4 +1,4 @@
-﻿angular.module('MyApp', ['rzModule']).controller('comicsMakerController', function ($scope) {
+﻿angular.module('MyApp', []).controller('comicsMakerController', function ($scope) {
     var RotationAngle = 0,
     Scale = 1,
     PosX = 0,
@@ -50,6 +50,8 @@
         width: 0
     }];
 
+    $scope.clouds = [];
+
     interact.maxInteractions(Infinity);   // Allow multiple interactions
 
     interact('.imagetest')
@@ -60,6 +62,48 @@
             isDraging = false;
         }
     });
+     
+    interact('.cloud')
+    .draggable({    
+    onmove: function (event) {
+        console.log("drag");
+        var rect = event.target.getBoundingClientRect(),
+            cloudId = -event.target.id - 1;
+        $scope.clouds[cloudId].posX = $scope.clouds[cloudId].posX + event.dx / rect.width;
+        $scope.clouds[cloudId].posY = $scope.clouds[cloudId].posY + event.dy / rect.height;
+        $("#" + event.target.id).css(
+        {
+            'webkittransform': "translate(" + $scope.clouds[cloudId].posX * 100 + "%, " + $scope.clouds[cloudId].posY * 100 + "%)",
+            'transform': "translate(" + $scope.clouds[cloudId].posX * 100 + "%, " + $scope.clouds[cloudId].posY * 100 + "%)"
+        });
+    }
+    })
+     .resizable({
+         preserveAspectRatio: false,
+         edges: { left: false, right: true, bottom: true, top: false }
+     })
+        .on('resizemove', function (event) {
+            var target = event.target,
+                containerRect = document.getElementById("main-form").getBoundingClientRect(),
+                cloudId = -event.target.id - 1,
+                oldCloudPosition = $("#"+target.id).position();
+            $("#" + event.target.id).css(
+            {
+                'webkittransform': "translate(" + oldCloudPosition.left + "px, " + oldCloudPosition.top + "px)",
+                'transform': "translate(" + oldCloudPosition.left + "px, " + oldCloudPosition.top + "px)"
+            });
+            $scope.clouds[cloudId].scaleX = target.style.width = event.rect.width / containerRect.width * 100 + '%';
+            $scope.clouds[cloudId].scaleY = target.style.height = event.rect.height / containerRect.height * 100 + '%';
+            var CloudPosition = $("#" + target.id).position(),
+                CloudRect = target.getBoundingClientRect();
+            $scope.clouds[cloudId].posX = (CloudPosition.left) / CloudRect.width;
+            $scope.clouds[cloudId].posY = (CloudPosition.top) / CloudRect.height;
+            $("#" + target.id).css(
+        {
+            'webkittransform': "translate(" + $scope.clouds[cloudId].posX * 100 + "%, " + $scope.clouds[cloudId].posY * 100 + "%)",
+            'transform': "translate(" + $scope.clouds[cloudId].posX * 100 + "%, " + $scope.clouds[cloudId].posY * 100 + "%)"
+        });
+     });
 
     interact('.slider')                   
       .origin('self')                     
@@ -113,6 +157,17 @@
         //SelectCell(id);
     });
 
+    $(".btn").click(function () {
+        var id = $scope.clouds.length+1;
+        $(".main-form").append(' <div class="cloud" id="-' + id + '"><textarea name="text"></textarea></div>');
+        $scope.clouds.push({ id: id, text: "", posX: 0, posY: 0, scaleX: 0.3, scaleY: 0.3 });
+    });
+
+    $(".cloud").bind("append", function () {
+        var id = $(this).attr('id');
+
+    });
+    
     function SliderRotateListner(event,value)
     {
         if (ImageId == null) return;
