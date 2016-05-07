@@ -144,22 +144,7 @@ d3:<input id="d3" /> d4:<input id="d4" /><br />
 
 
 
-    function ImageLoaded(element)
-    {
-        if (element.style.height > element.style.width)
-        {
-            element.style.width = "100%"; element.style.height = "auto";
-        }
-        else
-        {
-            element.style.width = "auto"; element.style.height = "100%";
-        }
-        var imgRect = element.getBoundingClientRect(),
-        height = imgRect.height,
-        width = imgRect.width;
-        element.setAttribute('height', height);
-        element.setAttribute('width', width);
-    }
+
 
     </script>
 

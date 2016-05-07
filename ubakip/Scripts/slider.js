@@ -44,8 +44,7 @@
             floor: 0,
             ceil: 360,
             step: 1,
-            precision: 1,
-            disabled:true
+            precision: 1    
     }
     };
 
@@ -110,12 +109,39 @@
             if ($scope.images[i].cellId == obj.id)
             {
                 console.log($scope.images[i].cellId);
-                $(obj).append(' <img src="' + $scope.images[i].src + '" id="' + i + '" onload="ImageLoaded(this)" class="imagetest" />');
-                SetTransformFromImage($scope.images[i]);
-                Transform($("#" + i));
+                $(obj).append(' <img src="' + $scope.images[i].src + '" id="' + i + '" class="imagetest" />');
+
             }
         }
     });
+
+    $(".imagetest").load(function () {
+        var id = $(this).attr('id');        
+        if ($(this).height() > $(this).width()) {
+            $(this).css({'height': 'auto','width' : '100%'});
+        }
+        else {
+            $(this).css({ 'height': '100%', 'width': 'auto' });
+        }
+        $scope.images[id].height = $(this).height();
+        $scope.images[id].width = $(this).width();
+        SetTransformFromImage($scope.images[id]);
+        Transform($(this));
+    });
+
+    //function ImageLoaded(element) {
+    //    if (element.style.height > element.style.width) {
+    //        element.style.width = "100%"; element.style.height = "auto";
+    //    }
+    //    else {
+    //        element.style.width = "auto"; element.style.height = "100%";
+    //    }
+    //    var imgRect = element.getBoundingClientRect(),
+    //    height = imgRect.height,
+    //    width = imgRect.width;
+    //    element.setAttribute('height', height);
+    //    element.setAttribute('width', width);
+    //}
 
     function SetTransform(rotationAngle,scale,posX,posY)
     {
@@ -131,8 +157,11 @@
         ImageId = Imgid;
         SetTransformFromImage($scope.images[ImageId]);
         EnableSliders();
-        height = $("#" + ImageId).attr("height");
-        width = $("#" + ImageId).attr("width");
+        var divRect = $("#" + ImageId).parent().get(0).getBoundingClientRect();
+        divHeight = divRect.height;
+        divWidth = divRect.width;
+        height = $scope.images[ImageId].height;
+        width = $scope.images[ImageId].width;
         var id = $("#" + ImageId).parent().attr('id');
         SelectCell(id);
     });
@@ -180,6 +209,7 @@
 
 
     function dragMoveListener(event) {
+        if (ImageId == null) return;
         delta = { dx: event.dx, dy: event.dy };
         var deltas = FixDeltas(event.target, delta);
         if (deltas.dx != 0 || deltas.dy != 0) {
@@ -227,7 +257,7 @@
 
     function AddTranslateChanges(delta) {
         var dx = delta.dx, dy = delta.dy,
-                    divRect = document.getElementById("sq1").getBoundingClientRect();
+            divRect = $("#" + ImageId).parent().get(0).getBoundingClientRect();
         var vertex1 = { x: divRect.left - dx, y: divRect.top - dy },
             vertex2 = { x: divRect.right - dx, y: divRect.top - dy },
             vertex3 = { x: divRect.right - dx, y: divRect.bottom - dy },
@@ -278,30 +308,30 @@
     }
 
     function GetExtrimLeftPoint(element, angle) {
-        if (angle <= 90) return GetBottomLeftImagePoint(element);
-        else if (angle <= 180) return GetBottomRightImagePoint(element);
-        else if (angle <= 270) return GetTopRightImagePoint(element);
+        if (angle < 90) return GetBottomLeftImagePoint(element);
+        else if (angle < 180) return GetBottomRightImagePoint(element);
+        else if (angle < 270) return GetTopRightImagePoint(element);
         else return GetTopLeftImagePoint(element);
     }
 
     function GetExtrimRightPoint(element, angle) {
-        if (angle <= 90) return GetTopRightImagePoint(element);
-        else if (angle <= 180) return GetTopLeftImagePoint(element);
-        else if (angle <= 270) return GetBottomLeftImagePoint(element);
+        if (angle < 90) return GetTopRightImagePoint(element);
+        else if (angle < 180) return GetTopLeftImagePoint(element);
+        else if (angle < 270) return GetBottomLeftImagePoint(element);
         else return GetBottomRightImagePoint(element);
     }
 
     function GetExtrimTopPoint(element, angle) {
-        if (angle <= 90) return GetTopLeftImagePoint(element);
-        else if (angle <= 180) return GetBottomLeftImagePoint(element);
-        else if (angle <= 270) return GetBottomRightImagePoint(element);
+        if (angle < 90) return GetTopLeftImagePoint(element);
+        else if (angle < 180) return GetBottomLeftImagePoint(element);
+        else if (angle < 270) return GetBottomRightImagePoint(element);
         else return GetTopRightImagePoint(element);
     }
 
     function GetExtrimBottomPoint(element, angle) {
-        if (angle <= 90) return GetBottomRightImagePoint(element);
-        else if (angle <= 180) return GetTopRightImagePoint(element);
-        else if (angle <= 270) return GetTopLeftImagePoint(element);
+        if (angle < 90) return GetBottomRightImagePoint(element);
+        else if (angle < 180) return GetTopRightImagePoint(element);
+        else if (angle < 270) return GetTopLeftImagePoint(element);
         else return GetBottomLeftImagePoint(element);
     }
 
