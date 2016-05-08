@@ -227,6 +227,13 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\custom.css" />
     <Content Include="Content\Images\Cartoon_Cloud1.svg.png" />
+    <Content Include="Content\Images\cloud1.png" />
+    <Content Include="Content\Images\cloud2.png" />
+    <Content Include="Content\Images\cloud3.png" />
+    <Content Include="Content\Images\cloud4.png" />
+    <Content Include="Content\Images\cloud5.png" />
+    <Content Include="Content\Images\cloud6.png" />
+    <Content Include="Content\Images\cloud7.png" />
     <Content Include="Content\Images\stampTiles.svg" />
     <Content Include="Content\Rating.css" />
     <Content Include="Content\Images\medal.png" />
@@ -261,6 +268,8 @@
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\drag-and-drop-pages.js" />
+    <Content Include="Scripts\feedback.js" />
+    <Content Include="Scripts\html2canvas.js" />
     <Content Include="Scripts\interact.js" />
     <Content Include="Scripts\interact.min.js" />
     <Content Include="Scripts\jquery-2.2.3.js" />
@@ -271,6 +280,7 @@
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Scripts\jscolor.min.js" />
     <Content Include="Scripts\jssor.slider.mini.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\respond.js" />
@@ -278,7 +288,6 @@
     <Content Include="Scripts\respond.matchmedia.addListener.min.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\comment.js" />
-    <Content Include="Scripts\rzslider.min.js" />
     <Content Include="Scripts\slider.js" />
     <Content Include="Scripts\sortable.min.js" />
     <Content Include="Scripts\_references.js" />
