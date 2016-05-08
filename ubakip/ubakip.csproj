@@ -333,6 +333,7 @@
     <Content Include="Views\Shared\templates\template1.cshtml" />
     <Content Include="Views\Shared\templates\template2.cshtml" />
     <Content Include="Views\Shared\templates\template3.cshtml" />
+    <Content Include="Views\Shared\templates\template4.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

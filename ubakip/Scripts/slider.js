@@ -208,7 +208,7 @@
                 }).appendTo($('#' + value.cellId));
             }
             else {
-                $scope.images.splice(index, 1);
+               // $scope.images.splice(index, 1);
             }
         });
     }
