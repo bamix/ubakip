@@ -55,6 +55,23 @@
 
     $scope.clouds = [];
 
+    $scope.template = "template1";
+    LoadTemplate();
+   
+    function LoadTemplate()
+    {        
+        $.ajax({
+            type: 'POST',
+            url: "/Home/LoadTemplate",
+            data: { id: $scope.template },
+            success: function (data) {
+                $("#main-form").empty();
+                $("#main-form").append(data);
+                LoadImages();
+            }
+        });       
+    }
+
     interact.maxInteractions(Infinity);   // Allow multiple interactions
 
     interact('.image-cell')
@@ -112,45 +129,48 @@
           }
       });
 
-    LoadImages();
-
-    $(".image-cell").load(function () {
-        var id = $(this).attr('id');
-        if ($(this).height() / $(this).parent().height() > $(this).width() / $(this).parent().width()) {
-            $(this).css({ 'height': 'auto', 'width': '100%' });
-        }
-        else {
-            $(this).css({ 'height': '100%', 'width': 'auto' });
-        }
-        $scope.images[id].height = $(this).height();
-        $scope.images[id].width = $(this).width();
-        divHeight = $(this).parent().height();
-        divWidth = $(this).parent().width();
-        SetTransformFromImage($scope.images[id]);
-        Transform($(this));
-    });
-    
-    $(".image-cell").click(function () {
+    $("#main-form").delegate(".cell .image-cell", "click", function () {
         var Imgid = $(this).attr('id');
-        if (ImageId == Imgid || isDraging) { return; }        
+        if (ImageId == Imgid || isDraging) { return; }
         ImageId = Imgid;
         SetTransformFromImage($scope.images[ImageId]);
         EnableSliders();
     });
 
+    $("#main-form").delegate(".cell .image-cell", "load", function () {
+        
+    });
+
+    document.body.addEventListener('load', function (event) {
+        var elm = event.target;        
+        if (!$(elm).hasClass("image-cell")) return;
+        SetImageHeightAndWidth(elm);
+        divHeight = $(elm).parent().height();
+        divWidth = $(elm).parent().width();
+        SetTransformFromImage($scope.images[elm.id]);
+        Transform($(elm));
+    },true);
+
     $(".btn").click(function () {
         var id=$(this).attr("id");
         if (id == "save") {
             console.log($("#main-form").html());
-        }
-        else {
-            var CloudId = $scope.clouds.length + 1;
-            $(".main-form").append(' <div class="cloud" id="-' + CloudId + '"><textarea id="-t' + CloudId + '" name="text"' +
-                'style="-webkit-mask-box-image: url(\'../../Content/Images/' + id + '.png\'); mask-border: url(\'../../Content/Images/' + id + '.png\') ;"></textarea></div>');
-            $scope.clouds.push({ id: CloudId, type: id, text: "", posX: 0, posY: 0, scaleX: 0.3, scaleY: 0.3 });
-        }      
+        }           
     });
 
+    $(".btn-template").click(function () {
+        var id = $(this).attr("id");
+        $scope.template = id;
+        //console.log(id);
+    });
+
+    $(".btn-cloud").click(function () {
+        var id = $(this).attr("id"),
+            CloudId = $scope.clouds.length + 1;
+        $(".main-form").append(' <div class="cloud" id="-' + CloudId + '"><textarea id="-t' + CloudId + '" name="text"' +
+            'style="-webkit-mask-box-image: url(\'../../Content/Images/' + id + '.png\'); mask-border: url(\'../../Content/Images/' + id + '.png\') ;"></textarea></div>');
+        $scope.clouds.push({ id: CloudId, type: id, text: "", posX: 0, posY: 0, scaleX: 0.3, scaleY: 0.3 });        
+    });
 
     function CloudResizeStartListner(event) {
         var target = event.target
@@ -207,6 +227,17 @@
         } else { isMinScale = false;}
     }
 
+    function SetImageHeightAndWidth(elm) {
+        if ($(elm).height() / $(elm).parent().height() > $(elm).width() / $(elm).parent().width()) {
+            $(elm).css({ 'height': 'auto', 'width': '100%' });
+        }
+        else {
+            $(elm).css({ 'height': '100%', 'width': 'auto' });
+        }
+        $scope.images[elm.id].height = $(elm).height();
+        $scope.images[elm.id].width = $(elm).width();
+    }
+
     function DeleteCloud(event) {
         var parent = $("#" + event.target.id).closest('div');
         $scope.clouds[-parent.attr("id") - 1] = EmptyCloud;
@@ -252,8 +283,13 @@
     function LoadImages() {
         $(".cell").each(function (item, obj) {
             for (var i = 0; i < $scope.images.length; i++) {
-                if ($scope.images[i].cellId == obj.id) {                   
-                    $(obj).append(' <img src="' + $scope.images[i].src + '" id="' + i + '" class="image-cell" />');
+                if ($scope.images[i].cellId == obj.id) {
+                    $("<img/>", {
+                        id: i,
+                        src: $scope.images[i].src,
+                        class: "image-cell"
+                    }).appendTo(obj).trigger("appened");
+                  //  $(obj).append(' <img src="' + $scope.images[i].src + '" id="' + i + '" class="image-cell" />');
                 }
             }
         });

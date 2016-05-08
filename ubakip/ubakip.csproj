@@ -330,6 +330,7 @@
     <Content Include="Views\Home\ComicsView.cshtml" />
     <Content Include="Views\Shared\PagePreview.cshtml" />
     <Content Include="Views\Home\ComicsMaker.cshtml" />
+    <Content Include="Views\Shared\templates\template1.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

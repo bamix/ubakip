@@ -149,5 +149,10 @@ namespace ubakip.Controllers
             return View();
         }
 
+        [HttpPost]
+        public ActionResult LoadTemplate(string id)
+        {            
+            return PartialView("templates/"+id);
+        }
     }
 }
