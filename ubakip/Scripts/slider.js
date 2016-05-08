@@ -26,20 +26,22 @@
         posX: 0,
         posY: 0,
         cellId: "sq1",
+        cellType: "square",
         id: "1",
         height:0,
         width : 0
     },
     {
-    src: "https://pp.vk.me/c630516/v630516851/17d3a/o2M3HScGpQc.jpg",
-    scale: 1,
-    rotate: 90,
-    posX: 0,
-    posY: 0.4,
-    cellId: "sq2",
-    id: "2",
-    height: 0,
-    width: 0
+        src: "https://pp.vk.me/c630516/v630516851/17d3a/o2M3HScGpQc.jpg",
+        scale: 1,
+        rotate: 90,
+        posX: 0,
+        posY: 0.4,
+        cellId: "sq2",
+        cellType: "square",
+        id: "2",
+        height: 0,
+        width: 0
     },
     {
         src: "https://pp.vk.me/c630516/v630516851/17d3a/o2M3HScGpQc.jpg",
@@ -48,29 +50,36 @@
         posX: 0,
         posY: 0,
         cellId: "sq3",
+        cellType: "rectangle",
         id: "3",
         height: 0,
         width: 0
     }];
 
-    $scope.clouds = [];
+    $scope.clouds = [
+        {
+            id: 0,
+            type: "cloud1",
+            text: "lol",
+            posX: 0,
+            posY: 0,
+            scaleX: 0.5,
+            scaleY: 0.5
+        },
+     {
+         id: 1,
+         type: "cloud2",
+         text: "kek",
+         posX: 0.2,
+         posY: 0.1,
+         scaleX: 0.3,
+         scaleY: 0.3
+     }];
 
     $scope.template = "template1";
+
     LoadTemplate();
    
-    function LoadTemplate()
-    {        
-        $.ajax({
-            type: 'POST',
-            url: "/Home/LoadTemplate",
-            data: { id: $scope.template },
-            success: function (data) {
-                $("#main-form").empty();
-                $("#main-form").append(data);
-                LoadImages();
-            }
-        });       
-    }
 
     interact.maxInteractions(Infinity);   // Allow multiple interactions
 
@@ -137,10 +146,6 @@
         EnableSliders();
     });
 
-    $("#main-form").delegate(".cell .image-cell", "load", function () {
-        
-    });
-
     document.body.addEventListener('load', function (event) {
         var elm = event.target;        
         if (!$(elm).hasClass("image-cell")) return;
@@ -149,6 +154,15 @@
         divWidth = $(elm).parent().width();
         SetTransformFromImage($scope.images[elm.id]);
         Transform($(elm));
+        if($(elm).parent().hasClass("rectangle") && $scope.images[elm.id].cellType=="square")
+        {
+            ImageId = elm.id;          
+            SetTransform(0, 1, 0, 0);
+            Transform($(elm));            
+            ImageId = null;
+            $scope.images[elm.id].cellType = "rectangle";
+        }
+        else { $scope.images[elm.id].cellType = "square"; }
     },true);
 
     $(".btn").click(function () {
@@ -158,22 +172,64 @@
         }           
     });
 
-    $(".btn-template").click(function () {
-        var id = $(this).attr("id");
-        $scope.template = id;
-        //console.log(id);
+    $(".btn-template").click(function () {        
+        $scope.template = $(this).attr("id");
+        LoadTemplate();       
     });
 
     $(".btn-cloud").click(function () {
         var id = $(this).attr("id"),
             CloudId = $scope.clouds.length + 1;
-        $(".main-form").append(' <div class="cloud" id="-' + CloudId + '"><textarea id="-t' + CloudId + '" name="text"' +
-            'style="-webkit-mask-box-image: url(\'../../Content/Images/' + id + '.png\'); mask-border: url(\'../../Content/Images/' + id + '.png\') ;"></textarea></div>');
+        AddCloud(CloudId,id,"");
         $scope.clouds.push({ id: CloudId, type: id, text: "", posX: 0, posY: 0, scaleX: 0.3, scaleY: 0.3 });        
     });
 
+    function LoadTemplate() {
+        $.ajax({
+            type: 'POST',
+            url: "/Home/LoadTemplate",
+            data: { id: $scope.template },
+            success: function (data) {
+                $("#main-form").empty();
+                $("#main-form").append(data);
+                LoadImages();
+                LoadClouds();
+            }
+        });
+    }
+
+    function LoadImages() {
+        $($scope.images).each(function (index, value) {
+            if ($('#' + value.cellId).length) {
+                $("<img/>", {
+                    id: index,
+                    src: value.src,
+                    class: "image-cell"
+                }).appendTo($('#' + value.cellId));
+            }
+            else {
+                $scope.images.splice(index, 1);
+            }
+        });
+    }
+
+    function LoadClouds()
+    {
+        $($scope.clouds).each(function (index, value) {            
+            AddCloud(index + 1, value.type, value.text);
+            MoveCloud(index)
+        });
+    }
+
+    function AddCloud(id, border,text)
+    {
+        $(".main-form").append(' <div class="cloud" id="-' + id + '"><textarea id="-t' + id + '" name="text"' +
+                   'style="-webkit-mask-box-image: url(\'../../Content/Images/' + border +
+                   '.png\'); mask-border: url(\'../../Content/Images/' + border + '.png\') ;">'+text+'</textarea></div>');
+    }
+
     function CloudResizeStartListner(event) {
-        var target = event.target
+        var target = event.target,
         cloudId = -event.target.id - 1,
         oldCloudPosition = $("#" + target.id).position();
         $("#" + event.target.id).css(
@@ -185,7 +241,8 @@
 
     function CloudResizeMoveListner(event) {
         var target = event.target,
-                  containerRect = document.getElementById("main-form").getBoundingClientRect();
+            cloudId = -event.target.id - 1,
+            containerRect = document.getElementById("main-form").getBoundingClientRect();
         $scope.clouds[cloudId].scaleX = target.style.width = event.rect.width / containerRect.width * 100 + '%';
         $scope.clouds[cloudId].scaleY = target.style.height = event.rect.height / containerRect.height * 100 + '%';
         var CloudPosition = $("#" + target.id).position(),
@@ -194,17 +251,23 @@
 
     function CloudResizeEndListner(event) {
         var target = event.target,
-               CloudPosition = $("#" + target.id).position(),
-               CloudRect = target.getBoundingClientRect();
+            cloudId = -event.target.id - 1,
+            CloudPosition = $("#" + target.id).position(),
+            CloudRect = target.getBoundingClientRect();
         $scope.clouds[cloudId].posX = (CloudPosition.left) / CloudRect.width;
         $scope.clouds[cloudId].posY = (CloudPosition.top) / CloudRect.height;
-        $("#" + target.id).css(
-    {
-        'webkittransform': "translate(" + $scope.clouds[cloudId].posX * 100 + "%, " + $scope.clouds[cloudId].posY * 100 + "%)",
-        'transform': "translate(" + $scope.clouds[cloudId].posX * 100 + "%, " + $scope.clouds[cloudId].posY * 100 + "%)"
-    });
+        MoveCloud(cloudId);
     }
     
+    function MoveCloud(index)
+    {
+        $("#" + (-index-1)).css(
+            {
+                'webkittransform': "translate(" + $scope.clouds[index].posX * 100 + "%, " + $scope.clouds[index].posY * 100 + "%)",
+                'transform': "translate(" + $scope.clouds[index].posX * 100 + "%, " + $scope.clouds[index].posY * 100 + "%)"
+            });
+    }
+
     function SliderRotateListner(event,value)
     {
         if (ImageId == null) return;
@@ -279,28 +342,20 @@
         "translate(" + PosX.toFixed(5) * 100 + "%, " + PosY.toFixed(5) * 100 + "%)"
             });
     }
-
-    function LoadImages() {
-        $(".cell").each(function (item, obj) {
-            for (var i = 0; i < $scope.images.length; i++) {
-                if ($scope.images[i].cellId == obj.id) {
-                    $("<img/>", {
-                        id: i,
-                        src: $scope.images[i].src,
-                        class: "image-cell"
-                    }).appendTo(obj).trigger("appened");
-                  //  $(obj).append(' <img src="' + $scope.images[i].src + '" id="' + i + '" class="image-cell" />');
-                }
-            }
-        });
-    }
-    
+       
     function SetTransform(rotationAngle,scale,posX,posY)
     {
-        Scale = scale;
-        RotationAngle = rotationAngle;        
-        PosX = posX;
-        PosY = posY;
+        $scope.images[ImageId].scale =  Scale = scale;
+        $scope.images[ImageId].rotate = RotationAngle = rotationAngle;
+        $scope.images[ImageId].posX = PosX = posX;
+        $scope.images[ImageId].posY = PosY = posY;
+    }
+    
+    function SetTransformFromImage(image) {
+        Scale = image.scale;
+        RotationAngle = image.rotate;
+        PosX = image.posX;
+        PosY = image.posY;
     }
 
     function EnableSliders() {
@@ -308,13 +363,6 @@
             scale = $scope.images[ImageId].scale;
         SetSliderValue(document.getElementById("slider_rotate"), rotate / 359, rotate.toFixed(0));
         SetSliderValue(document.getElementById("slider_scale"), (scale - 1) / 9, scale.toFixed(2));
-    }
-
-    function SetTransformFromImage(image) {
-        Scale = image.scale;
-        RotationAngle = image.rotate;
-        PosX = image.posX;
-        PosY = image.posY;
     }
 
     function dragMoveListener(event) {
