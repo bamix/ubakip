@@ -226,7 +226,7 @@
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\custom.css" />
-    <Content Include="Content\Images\Cartoon_Cloud1.svg.png" />
+    <Content Include="Content\Images\backgroundcell.jpg" />
     <Content Include="Content\Images\cloud1.png" />
     <Content Include="Content\Images\cloud2.png" />
     <Content Include="Content\Images\cloud3.png" />
@@ -234,7 +234,13 @@
     <Content Include="Content\Images\cloud5.png" />
     <Content Include="Content\Images\cloud6.png" />
     <Content Include="Content\Images\cloud7.png" />
-    <Content Include="Content\Images\stampTiles.svg" />
+    <Content Include="Content\Images\template1.jpg" />
+    <Content Include="Content\Images\template2.jpg" />
+    <Content Include="Content\Images\template3.jpg" />
+    <Content Include="Content\Images\template4.jpg" />
+    <Content Include="Content\Images\template5.jpg" />
+    <Content Include="Content\Images\template6.jpg" />
+    <Content Include="Content\Images\template7.jpg" />
     <Content Include="Content\Rating.css" />
     <Content Include="Content\Images\medal.png" />
     <Content Include="Content\rzslider.min.css" />
@@ -334,6 +340,9 @@
     <Content Include="Views\Shared\templates\template2.cshtml" />
     <Content Include="Views\Shared\templates\template3.cshtml" />
     <Content Include="Views\Shared\templates\template4.cshtml" />
+    <Content Include="Views\Shared\templates\template5.cshtml" />
+    <Content Include="Views\Shared\templates\template7.cshtml" />
+    <Content Include="Views\Shared\templates\template6.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

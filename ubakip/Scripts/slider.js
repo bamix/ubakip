@@ -15,6 +15,8 @@
         Horizontal: { value: 1 },
         Custom: { value: 2 }
     },
+    isFirstLoad = true,
+    countLoadedImages = 0,
     EmptyCloud = { id: null, type: null, text: "", posX: 0, posY: 0, scaleX: 0, scaleY: 0 };
 
     $scope.background="000000" ;
@@ -25,8 +27,7 @@
         rotate: 0,
         posX: 0,
         posY: 0,
-        cellId: "sq1",
-        cellType: "square",
+        cellId: "sq1",       
         id: "1",
         height:0,
         width : 0
@@ -37,24 +38,24 @@
         rotate: 90,
         posX: 0,
         posY: 0.4,
-        cellId: "sq2",
-        cellType: "square",
+        cellId: "sq2",        
         id: "2",
         height: 0,
         width: 0
     },
-    {
-        src: "https://pp.vk.me/c630516/v630516851/17d3a/o2M3HScGpQc.jpg",
-        scale: 2,
-        rotate: 0,
-        posX: 0,
-        posY: 0,
-        cellId: "sq3",
-        cellType: "rectangle",
-        id: "3",
-        height: 0,
-        width: 0
-    }];
+    //{
+    //    src: "https://pp.vk.me/c630516/v630516851/17d3a/o2M3HScGpQc.jpg",
+    //    scale: 2,
+    //    rotate: 0,
+    //    posX: 0,
+    //    posY: 0,
+    //    cellId: "sq3",
+    //    cellType: "rectangle",
+    //    id: "3",
+    //    height: 0,
+    //    width: 0
+    //}
+    ];
 
     $scope.clouds = [
         {
@@ -63,8 +64,8 @@
             text: "lol",
             posX: 0,
             posY: 0,
-            scaleX: 0.5,
-            scaleY: 0.5
+            scaleX: "50%",
+            scaleY: "50%"
         },
      {
          id: 1,
@@ -72,8 +73,8 @@
          text: "kek",
          posX: 0.2,
          posY: 0.1,
-         scaleX: 0.3,
-         scaleY: 0.3
+         scaleX: "30%",
+         scaleY: "30%"
      }];
 
     $scope.template = "template1";
@@ -102,14 +103,10 @@
             cloudId = -event.target.id - 1;
         $scope.clouds[cloudId].posX = $scope.clouds[cloudId].posX + event.dx / rect.width;
         $scope.clouds[cloudId].posY = $scope.clouds[cloudId].posY + event.dy / rect.height;
-        $("#" + event.target.id).css(
-        {
-            'webkittransform': "translate(" + $scope.clouds[cloudId].posX * 100 + "%, " + $scope.clouds[cloudId].posY * 100 + "%)",
-            'transform': "translate(" + $scope.clouds[cloudId].posX * 100 + "%, " + $scope.clouds[cloudId].posY * 100 + "%)"
-        });
+        MoveCloud(cloudId);
     }
     })
-     .resizable({
+    .resizable({
          preserveAspectRatio: false,
          edges: { left: false, right: true, bottom: true, top: false },
          onstart: CloudResizeStartListner,
@@ -146,23 +143,28 @@
         EnableSliders();
     });
 
+    $("#main-form").delegate(".textarea", "input", function () {
+         $scope.clouds[-$(this).parent().attr("id") - 1].text = $(this).val();
+    });
+
     document.body.addEventListener('load', function (event) {
         var elm = event.target;        
         if (!$(elm).hasClass("image-cell")) return;
         SetImageHeightAndWidth(elm);
         divHeight = $(elm).parent().height();
-        divWidth = $(elm).parent().width();
-        SetTransformFromImage($scope.images[elm.id]);
-        Transform($(elm));
-        if($(elm).parent().hasClass("rectangle") && $scope.images[elm.id].cellType=="square")
-        {
-            ImageId = elm.id;          
-            SetTransform(0, 1, 0, 0);
-            Transform($(elm));            
-            ImageId = null;
-            $scope.images[elm.id].cellType = "rectangle";
+        divWidth = $(elm).parent().width();       
+        if (isFirstLoad) {
+            SetTransformFromImage($scope.images[elm.id]);
+            Transform($(elm));
         }
-        else { $scope.images[elm.id].cellType = "square"; }
+        else{
+            ImageId = elm.id;
+            SetTransform(0, 1, 0, 0);
+            Transform($(elm));
+            ImageId = null;
+        }
+        countLoadedImages--;
+        if (countLoadedImages == 0) isFirstLoad = false;
     },true);
 
     $(".btn").click(function () {
@@ -181,7 +183,7 @@
         var id = $(this).attr("id"),
             CloudId = $scope.clouds.length + 1;
         AddCloud(CloudId,id,"");
-        $scope.clouds.push({ id: CloudId, type: id, text: "", posX: 0, posY: 0, scaleX: 0.3, scaleY: 0.3 });        
+        $scope.clouds.push({ id: CloudId, type: id, text: "", posX: 0, posY: 0, scaleX: "20%", scaleY: "20%" });        
     });
 
     function LoadTemplate() {
@@ -191,8 +193,9 @@
             data: { id: $scope.template },
             success: function (data) {
                 $("#main-form").empty();
-                $("#main-form").append(data);
+                $("#main-form").append(data);                
                 LoadImages();
+                LoadCellBackground();
                 LoadClouds();
             }
         });
@@ -201,29 +204,40 @@
     function LoadImages() {
         $($scope.images).each(function (index, value) {
             if ($('#' + value.cellId).length) {
+                $('#' + value.cellId).empty();
                 $("<img/>", {
                     id: index,
                     src: value.src,
-                    class: "image-cell"
+                    class: "image-cell dropable"
                 }).appendTo($('#' + value.cellId));
+                countLoadedImages++;
             }
-            else {
-               // $scope.images.splice(index, 1);
+        });      
+    }
+
+    function LoadCellBackground()
+    {
+        $(".cell").each(function (index,item) {
+            if ($(item).is(':empty')) {
+                $(item).append("<div class='background-div'> <img class='background-cell dropable'" +
+                    " src='../../Content/Images/backgroundcell.jpg'/></div>");
             }
         });
+        
     }
 
     function LoadClouds()
     {
         $($scope.clouds).each(function (index, value) {            
             AddCloud(index + 1, value.type, value.text);
-            MoveCloud(index)
+            MoveCloud(index);
+           // ScaleCloud(index);           
         });
     }
 
     function AddCloud(id, border,text)
     {
-        $(".main-form").append(' <div class="cloud" id="-' + id + '"><textarea id="-t' + id + '" name="text"' +
+        $(".main-form").append(' <div class="cloud" id="-' + id + '"><textarea class="textarea" id="-t' + id + '" name="text"' +
                    'style="-webkit-mask-box-image: url(\'../../Content/Images/' + border +
                    '.png\'); mask-border: url(\'../../Content/Images/' + border + '.png\') ;">'+text+'</textarea></div>');
     }
@@ -245,14 +259,12 @@
             containerRect = document.getElementById("main-form").getBoundingClientRect();
         $scope.clouds[cloudId].scaleX = target.style.width = event.rect.width / containerRect.width * 100 + '%';
         $scope.clouds[cloudId].scaleY = target.style.height = event.rect.height / containerRect.height * 100 + '%';
-        var CloudPosition = $("#" + target.id).position(),
-            CloudRect = target.getBoundingClientRect();
     }
 
     function CloudResizeEndListner(event) {
         var target = event.target,
             cloudId = -event.target.id - 1,
-            CloudPosition = $("#" + target.id).position(),
+            CloudPosition = $(target).position(),
             CloudRect = target.getBoundingClientRect();
         $scope.clouds[cloudId].posX = (CloudPosition.left) / CloudRect.width;
         $scope.clouds[cloudId].posY = (CloudPosition.top) / CloudRect.height;
@@ -263,8 +275,11 @@
     {
         $("#" + (-index-1)).css(
             {
+                'height' : $scope.clouds[index].scaleY,
+                'width': $scope.clouds[index].scaleX,
                 'webkittransform': "translate(" + $scope.clouds[index].posX * 100 + "%, " + $scope.clouds[index].posY * 100 + "%)",
-                'transform': "translate(" + $scope.clouds[index].posX * 100 + "%, " + $scope.clouds[index].posY * 100 + "%)"
+                'transform': "translate(" + $scope.clouds[index].posX * 100 + "%, " + $scope.clouds[index].posY * 100 + "%)",
+                
             });
     }
 
