@@ -1,4 +1,4 @@
-﻿angular.module('MyApp', []).controller('comicsMakerController', function ($scope) {
+﻿angular.module('MyApp', ['ngMaterial']).controller('comicsMakerController', function ($scope) {
     var RotationAngle = 0,
     Scale = 1,
     PosX = 0,
@@ -81,7 +81,6 @@
 
     LoadTemplate();
    
-
     interact.maxInteractions(Infinity);   // Allow multiple interactions
 
     interact('.image-cell')
@@ -186,6 +185,28 @@
         $scope.clouds.push({ id: CloudId, type: id, text: "", posX: 0, posY: 0, scaleX: "20%", scaleY: "20%" });        
     });
 
+    window.onload = function () {
+        $(".cell").bind("dragover", function (e) {
+            if (e.preventDefault) e.preventDefault();
+            if (e.stopPropagation) e.stopPropagation();
+        });
+
+        $(".cell").bind("dragenter", function (e) {
+
+        });
+
+        $(".cell").bind("dragleave", function (e) {
+
+        });
+
+        $(".cell").bind("drop", function (e) {
+            if (e.preventDefault) e.preventDefault();
+            if (e.stopPropagation) e.stopPropagation();
+            var file = event.dataTransfer.files[0];
+            alert($(this).attr("id"));
+        });
+    };
+
     function LoadTemplate() {
         $.ajax({
             type: 'POST',
@@ -219,7 +240,7 @@
     {
         $(".cell").each(function (index,item) {
             if ($(item).is(':empty')) {
-                $(item).append("<div class='background-div'> <img class='background-cell dropable'" +
+                $(item).append("<div class='background-div dropable'> <img class='background-cell'" +
                     " src='../../Content/Images/backgroundcell.jpg'/></div>");
             }
         });
@@ -583,4 +604,5 @@
     function GetDistance(point1, point2) {
         return Math.sqrt(Math.pow(point1.x - point2.x, 2) + Math.pow(point1.y - point2.y, 2));
     }
+     
 });

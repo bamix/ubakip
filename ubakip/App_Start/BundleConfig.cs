@@ -17,6 +17,7 @@ namespace ubakip
             bundles.Add(new ScriptBundle("~/bundles/angular").Include(
                        "~/Scripts/angular.min.js",
                         "~/Scripts/angularbase.js"));
+
             bundles.Add(new ScriptBundle("~/bundles/interact").Include(
 "~/Scripts/interact.js"));
 

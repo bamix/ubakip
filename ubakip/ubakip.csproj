@@ -273,6 +273,7 @@
     <Content Include="Scripts\angularbase.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="Scripts\dnddownload.js" />
     <Content Include="Scripts\drag-and-drop-pages.js" />
     <Content Include="Scripts\feedback.js" />
     <Content Include="Scripts\html2canvas.js" />

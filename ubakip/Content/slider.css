@@ -216,4 +216,9 @@ clip-path: polygon(2% 8%, 98% 28%, 98% 98%, 2% 98%);
   content: '';
 }
 
+.dropzone{
+    background:red;
+    height:100px;
+    width:100%;
+}
 
