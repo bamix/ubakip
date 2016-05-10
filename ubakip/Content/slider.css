@@ -96,6 +96,7 @@
 
  display: block;
     margin:auto; 
+    max-height:100%;
 }
 
 .background-div
@@ -104,6 +105,7 @@
     height:100%;
     background:#858585;
 }
+
 .square
 {
     position:relative;

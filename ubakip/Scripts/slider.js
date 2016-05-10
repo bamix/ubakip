@@ -1,4 +1,4 @@
-﻿angular.module('MyApp', ['ngMaterial']).controller('comicsMakerController', function ($scope) {
+﻿angular.module('MyApp', ['ngDialog']).controller('comicsMakerController', function ($scope, ngDialog) {
     var RotationAngle = 0,
     Scale = 1,
     PosX = 0,
@@ -21,8 +21,11 @@
 
     $scope.background="000000" ;
 
+    $scope.url = "";
+
     $scope.images = [{
         src: "https://pp.vk.me/c630516/v630516851/17d3a/o2M3HScGpQc.jpg",
+        isVideo: false,
         scale: 1,
         rotate: 0,
         posX: 0,
@@ -34,6 +37,7 @@
     },
     {
         src: "https://pp.vk.me/c630516/v630516851/17d3a/o2M3HScGpQc.jpg",
+        isVideo: false,
         scale: 1,
         rotate: 90,
         posX: 0,
@@ -43,39 +47,41 @@
         height: 0,
         width: 0
     },
-    //{
-    //    src: "https://pp.vk.me/c630516/v630516851/17d3a/o2M3HScGpQc.jpg",
-    //    scale: 2,
-    //    rotate: 0,
-    //    posX: 0,
-    //    posY: 0,
-    //    cellId: "sq3",
-    //    cellType: "rectangle",
-    //    id: "3",
-    //    height: 0,
-    //    width: 0
-    //}
+    {
+        src: "http://clips.vorwaerts-gmbh.de/VfE_html5.mp4",
+        isVideo : true,
+        scale: 2,
+        rotate: 0,
+        posX: 0,
+        posY: 0,
+        cellId: "sq3",
+        cellType: "rectangle",
+        id: "3",
+        height: 0,
+        width: 0
+    }
     ];
 
     $scope.clouds = [
-        {
-            id: 0,
-            type: "cloud1",
-            text: "lol",
-            posX: 0,
-            posY: 0,
-            scaleX: "50%",
-            scaleY: "50%"
-        },
-     {
-         id: 1,
-         type: "cloud2",
-         text: "kek",
-         posX: 0.2,
-         posY: 0.1,
-         scaleX: "30%",
-         scaleY: "30%"
-     }];
+     //   {
+     //       id: 0,
+     //       type: "cloud1",
+     //       text: "lol",
+     //       posX: 0,
+     //       posY: 0,
+     //       scaleX: "50%",
+     //       scaleY: "50%"
+     //   },
+     //{
+     //    id: 1,
+     //    type: "cloud2",
+     //    text: "kek",
+     //    posX: 0.2,
+     //    posY: 0.1,
+     //    scaleX: "30%",
+     //    scaleY: "30%"
+     //}
+    ];
 
     $scope.template = "template1";
 
@@ -88,31 +94,36 @@
         autoScroll: true,
         onmove: dragMoveListener,
         onend: function (event) {
-            function  dragEndDelay(){
-              isDraging = false;
-            }            
+            function dragEndDelay() {
+                isDraging = false;
+            }
             setTimeout(dragEndDelay, 100);
         }
-    });
-     
+    })
+     .on('hold', LoadDialog);
+    
+
+    interact('.background-cell')
+     .on('hold', LoadDialog);
+
     interact('.cloud')
-    .draggable({    
-    onmove: function (event) {       
-        var rect = event.target.getBoundingClientRect(),
-            cloudId = -event.target.id - 1;
-        $scope.clouds[cloudId].posX = $scope.clouds[cloudId].posX + event.dx / rect.width;
-        $scope.clouds[cloudId].posY = $scope.clouds[cloudId].posY + event.dy / rect.height;
-        MoveCloud(cloudId);
-    }
+    .draggable({
+        onmove: function (event) {
+            var rect = event.target.getBoundingClientRect(),
+                cloudId = -event.target.id - 1;
+            $scope.clouds[cloudId].posX = $scope.clouds[cloudId].posX + event.dx / rect.width;
+            $scope.clouds[cloudId].posY = $scope.clouds[cloudId].posY + event.dy / rect.height;
+            MoveCloud(cloudId);
+        }
     })
     .resizable({
-         preserveAspectRatio: false,
-         edges: { left: false, right: true, bottom: true, top: false },
-         onstart: CloudResizeStartListner,
-         onmove: CloudResizeMoveListner,
-         onend : CloudResizeEndListner
-     })
-    .on('doubletap', DeleteCloud)
+        preserveAspectRatio: false,
+        edges: { left: false, right: true, bottom: true, top: false },
+        onstart: CloudResizeStartListner,
+        onmove: CloudResizeMoveListner,
+        onend: CloudResizeEndListner
+    })
+    .on('doubletap', DeleteCloud);
 
     interact('.slider')                   
       .origin('self')                          
@@ -134,6 +145,23 @@
           }
       });
 
+    function LoadDialog(event)
+    {
+        ngDialog.open({
+            template: 'Enter URL:  <input type="url" id="url"/><br/>or <input id="file" type="file"><br/><button type="button" ng-click="AddIm()" class="btn btn-success">Add</button>',
+            plain: true,
+            className: 'ngdialog-theme-default',
+            controller: ['$scope', function ($scope) {
+                $scope.AddIm = function () {
+                    if ($("#file").val() != "") { alert($("#file").val()); }
+                    if ($("#url").val() != "") { alert("kek2"); }
+                    ngDialog.close();
+                }
+            }],
+            scope: $scope
+        });
+    }
+
     $("#main-form").delegate(".cell .image-cell", "click", function () {
         var Imgid = $(this).attr('id');
         if (ImageId == Imgid || isDraging) { return; }
@@ -146,17 +174,25 @@
          $scope.clouds[-$(this).parent().attr("id") - 1].text = $(this).val();
     });
 
-    document.body.addEventListener('load', function (event) {
-        var elm = event.target;        
+    document.body.addEventListener('load', function (event) {//for image load
+        InitElement(event.target);
+    },true);
+
+    document.body.addEventListener('loadedmetadata', function (event) {//for video load
+        InitElement(event.target);
+    }, true);
+
+    function InitElement(elm)
+    {       
         if (!$(elm).hasClass("image-cell")) return;
         SetImageHeightAndWidth(elm);
         divHeight = $(elm).parent().height();
-        divWidth = $(elm).parent().width();       
+        divWidth = $(elm).parent().width();
         if (isFirstLoad) {
             SetTransformFromImage($scope.images[elm.id]);
             Transform($(elm));
         }
-        else{
+        else {
             ImageId = elm.id;
             SetTransform(0, 1, 0, 0);
             Transform($(elm));
@@ -164,7 +200,7 @@
         }
         countLoadedImages--;
         if (countLoadedImages == 0) isFirstLoad = false;
-    },true);
+    }
 
     $(".btn").click(function () {
         var id=$(this).attr("id");
@@ -226,11 +262,20 @@
         $($scope.images).each(function (index, value) {
             if ($('#' + value.cellId).length) {
                 $('#' + value.cellId).empty();
-                $("<img/>", {
-                    id: index,
-                    src: value.src,
-                    class: "image-cell dropable"
-                }).appendTo($('#' + value.cellId));
+                if (value.isVideo)
+                {
+                    $('#' + value.cellId).append(
+                    '<video id='+ index +'  class= "image-cell" autoplay>' +
+                    ' <source src="'+value.src+'" type="video/mp4">  '+  
+                    ' Your browser does not support the video tag.</video>');
+                }
+                else {
+                    $("<img/>", {
+                        id: index,
+                        src: value.src,
+                        class: "image-cell"
+                    }).appendTo($('#' + value.cellId));
+                }
                 countLoadedImages++;
             }
         });      
@@ -240,7 +285,7 @@
     {
         $(".cell").each(function (index,item) {
             if ($(item).is(':empty')) {
-                $(item).append("<div class='background-div dropable'> <img class='background-cell'" +
+                $(item).append("<div class='background-div dropable'> <img draggable = 'false' class='background-cell'" +
                     " src='../../Content/Images/backgroundcell.jpg'/></div>");
             }
         });
@@ -605,4 +650,17 @@
         return Math.sqrt(Math.pow(point1.x - point2.x, 2) + Math.pow(point1.y - point2.y, 2));
     }
      
+})
+.controller('InsideCtrl', function ($scope, ngDialog) {
+    $scope.dialogModel = {
+        message: 'message from passed scope'
+    };
+    $scope.openSecond = function () {
+        ngDialog.open({
+            template: '<h3><a href="" ng-click="closeSecond()">Close all by click here!</a></h3>',
+            plain: true,
+            closeByEscape: false,
+            controller: 'SecondModalCtrl'
+        });
+    };
 });

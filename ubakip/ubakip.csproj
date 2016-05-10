@@ -241,6 +241,8 @@
     <Content Include="Content\Images\template5.jpg" />
     <Content Include="Content\Images\template6.jpg" />
     <Content Include="Content\Images\template7.jpg" />
+    <Content Include="Content\ngDialog-theme-default.min.css" />
+    <Content Include="Content\ngDialog.min.css" />
     <Content Include="Content\Rating.css" />
     <Content Include="Content\Images\medal.png" />
     <Content Include="Content\rzslider.min.css" />
@@ -273,10 +275,7 @@
     <Content Include="Scripts\angularbase.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
-    <Content Include="Scripts\dnddownload.js" />
     <Content Include="Scripts\drag-and-drop-pages.js" />
-    <Content Include="Scripts\feedback.js" />
-    <Content Include="Scripts\html2canvas.js" />
     <Content Include="Scripts\interact.js" />
     <Content Include="Scripts\interact.min.js" />
     <Content Include="Scripts\jquery-2.2.3.js" />
@@ -290,13 +289,14 @@
     <Content Include="Scripts\jscolor.min.js" />
     <Content Include="Scripts\jssor.slider.mini.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
+    <Content Include="Scripts\ngDialog.js" />
+    <Content Include="Scripts\ngDialog.min.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.matchmedia.addListener.js" />
     <Content Include="Scripts\respond.matchmedia.addListener.min.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\comment.js" />
     <Content Include="Scripts\slider.js" />
-    <Content Include="Scripts\sortable.min.js" />
     <Content Include="Scripts\_references.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
