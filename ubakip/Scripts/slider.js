@@ -20,10 +20,9 @@
     EmptyCloud = { id: null, type: null, text: "", posX: 0, posY: 0, scaleX: 0, scaleY: 0 };
 
     $scope.background="000000" ;
-
-    $scope.url = "";
-
-    $scope.images = [{
+    
+    $scope.images = [
+        {
         src: "https://pp.vk.me/c630516/v630516851/17d3a/o2M3HScGpQc.jpg",
         isVideo: false,
         scale: 1,
@@ -35,7 +34,7 @@
         height:0,
         width : 0
     },
-    {
+        {
         src: "https://pp.vk.me/c630516/v630516851/17d3a/o2M3HScGpQc.jpg",
         isVideo: false,
         scale: 1,
@@ -47,7 +46,7 @@
         height: 0,
         width: 0
     },
-    {
+        {
         src: "http://clips.vorwaerts-gmbh.de/VfE_html5.mp4",
         isVideo : true,
         scale: 2,
@@ -162,6 +161,21 @@
         });
     }
 
+    $("#main-form").delegate(".video-btn", "click", function () {
+        playPause($(this).parent().find("video"),$(this));
+    });
+
+    function playPause(myVideo,image) {
+        if (myVideo.get(0).paused) {
+            myVideo.get(0).play();
+            image.attr("src", "../../Content/Images/pause.png");
+        }
+        else {
+            myVideo.get(0).pause();
+            image.attr("src", "../../Content/Images/play.png");
+        }
+    }
+
     $("#main-form").delegate(".cell .image-cell", "click", function () {
         var Imgid = $(this).attr('id');
         if (ImageId == Imgid || isDraging) { return; }
@@ -220,7 +234,7 @@
         AddCloud(CloudId,id,"");
         $scope.clouds.push({ id: CloudId, type: id, text: "", posX: 0, posY: 0, scaleX: "20%", scaleY: "20%" });        
     });
-
+    
     window.onload = function () {
         $(".cell").bind("dragover", function (e) {
             if (e.preventDefault) e.preventDefault();
@@ -265,9 +279,11 @@
                 if (value.isVideo)
                 {
                     $('#' + value.cellId).append(
-                    '<video id='+ index +'  class= "image-cell" autoplay>' +
+                        '<img class="video-btn" src="../../Content/Images/play.png" />' +
+                    '<video id=' + index + '  class= "image-cell">' +
                     ' <source src="'+value.src+'" type="video/mp4">  '+  
-                    ' Your browser does not support the video tag.</video>');
+                    ' Your browser does not support the video tag.</video>'
+                    );
                 }
                 else {
                     $("<img/>", {

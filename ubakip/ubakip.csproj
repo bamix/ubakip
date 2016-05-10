@@ -234,6 +234,8 @@
     <Content Include="Content\Images\cloud5.png" />
     <Content Include="Content\Images\cloud6.png" />
     <Content Include="Content\Images\cloud7.png" />
+    <Content Include="Content\Images\pause.png" />
+    <Content Include="Content\Images\play.png" />
     <Content Include="Content\Images\template1.jpg" />
     <Content Include="Content\Images\template2.jpg" />
     <Content Include="Content\Images\template3.jpg" />

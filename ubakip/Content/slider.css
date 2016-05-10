@@ -224,3 +224,10 @@ clip-path: polygon(2% 8%, 98% 28%, 98% 98%, 2% 98%);
     width:100%;
 }
 
+.video-btn{
+    position:absolute;
+    z-index:10;
+    height:50px;
+    width:50px;
+    transition: all 1s;
+}
