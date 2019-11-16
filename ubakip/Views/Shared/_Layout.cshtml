@@ -1,0 +1,68 @@
+﻿<!DOCTYPE html>
+<html >
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - Ubakip.ru</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+    <script src="~/Scripts/jquery-ui.min.js"></script>
+    @*<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>*@@*before Angular*@   
+  
+    @Scripts.Render("~/bundles/angular")   
+
+    <link href="~/Content/custom.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/rating.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/slider.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="~/Content/ngDialog-theme-default.min.css" />
+    <link rel="stylesheet" type="text/css" href="~/Content/ngDialog.min.css" />
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css"
+          href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.1/themes/base/jquery-ui.css" />
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+               @Html.ActionLink("Ubakip.ru", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li>@Html.ActionLink("New", "Index", "Home")</li>
+                    <li>@Html.ActionLink("Popular", "Index", "Home")</li>
+                    <li>@Html.ActionLink("Comics", "ComicsView", "Home")</li>
+                    <li>@Html.ActionLink("ComicsMaker", "ComicsMaker", "Home")</li>
+                    <li>@Html.ActionLink("User", "UserInfo", "Home")</li>
+                    <li><form action="" class="search-form">
+    <div class="form-group has-feedback">
+        <label for="search" class="sr-only">Search</label>
+        <input type="text" class="form-control" name="search" id="search" placeholder="search">
+        <span class="glyphicon glyphicon-search form-control-feedback"></span>
+    </div>
+</form></li>
+                  </ul>
+
+
+                @Html.Partial("_LoginPartial")
+            </div>
+        </div>
+    </div>
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+        <footer>
+            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
+        </footer>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</body>
+</html>
